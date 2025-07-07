@@ -608,12 +608,6 @@ const incrementTrustIndex = async (req, res) => {
   }
 };
 
-const updateUserTrustIndex = async (userId, increment) => {
-  const user = await User.findByPk(userId);
-  user.trust_index += increment;
-  await user.save();
-};
-
 const updateUserStats = async (
   userId,
   pointsToAdd,
@@ -915,5 +909,4 @@ module.exports = {
   getTopMonthlyWinners,
   incrementTutorialProgress,
   getUserDetailsById,
-  incrementCatchProbability,
 };

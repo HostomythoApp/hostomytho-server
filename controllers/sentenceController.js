@@ -1,5 +1,5 @@
 const { Sentence } = require("../models");
-const { Op, Sequelize } = require("sequelize");
+const { Sequelize } = require("sequelize");
 
 const getAllSentences = async (req, res) => {
   try {

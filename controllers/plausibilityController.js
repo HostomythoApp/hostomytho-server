@@ -5,7 +5,6 @@ const {
   Token,
   GroupTextRating,
   UserTextRating,
-  UserCommentsGroupTextRating,
 } = require("../models");
 const { Op } = require("sequelize");
 const { Sequelize } = require("sequelize");

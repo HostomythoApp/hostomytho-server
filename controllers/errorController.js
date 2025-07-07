@@ -7,7 +7,6 @@ const {
   GroupTextRating,
 } = require("../models");
 const { Sequelize } = require("sequelize");
-const { sequelize } = require("../service/db.js");
 
 const Op = Sequelize.Op;
 
