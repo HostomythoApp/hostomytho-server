@@ -41,6 +41,7 @@ const getText = async (req, res) => {
       randomNumber < sumTextAlreadyTreated
     ) {
       // Choix d'un texte déjà joué tiré de GroupTextRating
+      // TODO: Prevent getting a group text rating the player already partook in
       group = await GroupTextRating.findOne({
         order: Sequelize.literal("RAND()"),
         include: {
@@ -53,39 +54,7 @@ const getText = async (req, res) => {
         return res.status(404).json({ error: "No suitable group text found" });
       }
 
-      let sentences;
-      if (group.sentence_positions === "full") {
-        sentences = await Sentence.findAll({
-          where: { text_id: group.text.id },
-          order: [["position", "ASC"]],
-          include: [
-            {
-              model: Token,
-              attributes: ["id", "content", "position", "is_punctuation"],
-              required: true,
-            },
-          ],
-        });
-      } else {
-        const positions = group.sentence_positions
-          .split(",")
-          .map((pos) => parseInt(pos));
-
-        sentences = await Sentence.findAll({
-          where: {
-            text_id: group.text.id,
-            position: positions,
-          },
-          order: [["position", "ASC"]],
-          include: [
-            {
-              model: Token,
-              attributes: ["id", "content", "position", "is_punctuation"],
-              required: true,
-            },
-          ],
-        });
-      }
+      let sentences = await extractSentencesForGroup(group);
 
       let tokens = sentences.flatMap((sentence) =>
         sentence.tokens.map((token) => ({
@@ -670,3 +639,30 @@ module.exports = {
   getErrorDetailTest,
   getText,
 };
+
+async function extractSentencesForGroup(group) {
+  let where;
+  if (group.sentence_positions === "full") {
+    where = { text_id: group.text.id };
+  } else {
+    const positions = group.sentence_positions
+      .split(",")
+      .map((pos) => parseInt(pos));
+    where = {
+      text_id: group.text.id,
+      position: positions,
+    };
+  }
+  return await Sentence.findAll({
+    where: where,
+    order: [["position", "ASC"]],
+    include: [
+      {
+        model: Token,
+        attributes: ["id", "content", "position", "is_punctuation"],
+        required: true,
+      },
+    ],
+  });
+}
+
