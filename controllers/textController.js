@@ -375,7 +375,7 @@ const createText = async (req, res) => {
    
           res.status(201).json(text);
         } catch (innerError) {
-          console.error(`Database or data error: ${innerError}`);
+          console.error(`Database or data error when creating a text: ${innerError}`);
           res.status(500).json({ error: innerError.message });
         }
       }
