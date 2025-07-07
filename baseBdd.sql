@@ -402,6 +402,7 @@ CREATE TABLE `texts` (
   `is_negation_specification_test` tinyint(4) DEFAULT 0,
   `is_active` tinyint(4) DEFAULT 1,
   `length` int(11) DEFAULT 0,
+  `created_at` DATETIME DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=441 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -728,7 +729,7 @@ CREATE TABLE `users` (
   `trust_index` tinyint(1) DEFAULT 50,
   `notifications_enabled` tinyint(1) DEFAULT 1,
   `gender` enum('homme','femme') NOT NULL DEFAULT 'homme',
-  `created_at` varchar(45) DEFAULT current_timestamp(),
+  `created_at` varchar(45) DEFAULT 'CURRENT_TIMESTAMP',
   `color_skin` enum('clear','medium','dark') DEFAULT 'medium',
   `tutorial_progress` tinyint(4) DEFAULT 0,
   `moderator` tinyint(4) NOT NULL DEFAULT 0,
