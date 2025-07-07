@@ -4,7 +4,12 @@
   "description": "Hostomytho application server",
   "main": "app.js",
   "scripts": {
-    "start": "nodemon ./bin/www"
+    "start": "nodemon ./bin/www",
+    "test": "jest",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "format": "prettier --check --debug-check .",
+    "format:fix": "prettier --write ."
   },
   "author": "Beremy",
   "license": "ISC",
@@ -28,5 +33,12 @@
     "nodemailer": "^6.9.3",
     "nodemon": "^3.0.1",
     "sequelize": "^6.31.0"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.30.1",
+    "eslint": "^9.30.1",
+    "globals": "^16.3.0",
+    "jest": "^30.0.4",
+    "prettier": "3.6.2"
   }
 }
