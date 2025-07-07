@@ -36,5 +36,4 @@ const dumpTables = async (req, res) => {
   }
 };
 
-
 module.exports = { dumpTables };

@@ -1,4 +1,3 @@
 {
-    "ignore": ["controllers/temp_texts.json", "uploads/*"]
-  }
-  
+  "ignore": ["controllers/temp_texts.json", "uploads/*"]
+}

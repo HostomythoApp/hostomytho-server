@@ -1,13 +1,6 @@
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
-const {
-  User,
-  Achievement,
-  UserSkin,
-  MonthlyWinners,
-  Skin,
-  RefreshToken,
-} = require("../models");
+const { User, Achievement, UserSkin, MonthlyWinners, Skin, RefreshToken } = require("../models");
 const { QueryTypes } = require("sequelize");
 const { sequelize } = require("../service/db.js");
 const moment = require("moment");
@@ -88,10 +81,7 @@ const createUser = async (user) => {
 const signup = async (req, res) => {
   try {
     // Convertit une chaîne vide en null pour éviter le "mail déjà" pris quand l'user ne la précise pas
-    const email =
-      req.body.email && req.body.email.trim() !== ""
-        ? req.body.email.trim()
-        : null;
+    const email = req.body.email && req.body.email.trim() !== "" ? req.body.email.trim() : null;
 
     if (email) {
       const existingUserByEmail = await User.findOne({
@@ -99,9 +89,7 @@ const signup = async (req, res) => {
       });
 
       if (existingUserByEmail) {
-        return res
-          .status(409)
-          .json({ error: "Cette adresse email est déjà utilisée." });
+        return res.status(409).json({ error: "Cette adresse email est déjà utilisée." });
       }
     }
 
@@ -117,9 +105,7 @@ const signup = async (req, res) => {
     });
     const userInfo = user.get({ plain: true });
     delete userInfo.password;
-    res
-      .status(201)
-      .json({ message: "User created successfully", token, user: userInfo });
+    res.status(201).json({ message: "User created successfully", token, user: userInfo });
   } catch (error) {
     if (error.name === "SequelizeUniqueConstraintError") {
       res.status(409).json({ error: "Ce nom d'utilisateur est déjà pris." });
@@ -153,10 +139,7 @@ const signin = async (req, res) => {
       return res.status(404).json({ error: "User not found" });
     }
 
-    const isPasswordValid = await bcrypt.compare(
-      req.body.password,
-      user.password
-    );
+    const isPasswordValid = await bcrypt.compare(req.body.password, user.password);
     if (!isPasswordValid) {
       return res.status(401).json({ error: "Invalid password" });
     }
@@ -321,9 +304,7 @@ const getUserRankingRange = async (req, res) => {
       { type: QueryTypes.SELECT }
     );
 
-    const userRankingIndex = rankings.findIndex(
-      (ranking) => ranking.id === userId
-    );
+    const userRankingIndex = rankings.findIndex((ranking) => ranking.id === userId);
 
     if (userRankingIndex === -1) {
       return res.status(404).json({ error: "User not found" });
@@ -362,9 +343,7 @@ const getUserRankingRangeInMonthly = async (req, res) => {
       { type: QueryTypes.SELECT }
     );
 
-    const userRankingIndex = rankings.findIndex(
-      (ranking) => ranking.id === userId
-    );
+    const userRankingIndex = rankings.findIndex((ranking) => ranking.id === userId);
 
     if (userRankingIndex === -1) {
       return res.status(404).json({ error: "User not found" });
@@ -448,10 +427,7 @@ async function updateUserCoeffMulti(user, transaction) {
 
     const newCoeffMulti = parseFloat((1.0 + achievementCount * 0.1).toFixed(1));
 
-    await user.update(
-      { coeffMulti: newCoeffMulti },
-      { transaction: transaction }
-    );
+    await user.update({ coeffMulti: newCoeffMulti }, { transaction: transaction });
   } catch (err) {
     console.error("An error occurred while updating user coeffMulti:", err);
     throw err;
@@ -482,10 +458,7 @@ async function checkAchievements(user, transaction) {
         where: { id: achievement.id },
         transaction: transaction,
       });
-      if (
-        existingAchievement.length === 0 &&
-        user.points >= achievement.score
-      ) {
+      if (existingAchievement.length === 0 && user.points >= achievement.score) {
         const newAchievement = await Achievement.findByPk(achievement.id, {
           transaction: transaction,
         });
@@ -505,10 +478,7 @@ async function checkAchievements(user, transaction) {
         where: { id: achievement.id },
         transaction: transaction,
       });
-      if (
-        existingAchievement.length === 0 &&
-        user.consecutiveDaysPlayed >= achievement.days
-      ) {
+      if (existingAchievement.length === 0 && user.consecutiveDaysPlayed >= achievement.days) {
         const newAchievement = await Achievement.findByPk(achievement.id, {
           transaction: transaction,
         });
@@ -543,10 +513,9 @@ async function checkAchievements(user, transaction) {
       });
 
       if (userSkins.length >= totalSkins) {
-        const allSkinsAchievement = await Achievement.findByPk(
-          allSkinsAchievementId,
-          { transaction: transaction }
-        );
+        const allSkinsAchievement = await Achievement.findByPk(allSkinsAchievementId, {
+          transaction: transaction,
+        });
         if (allSkinsAchievement) {
           await user.addAchievement(allSkinsAchievement, {
             through: { notified: false },
@@ -612,15 +581,10 @@ const incrementCatchProbability = async (req, res) => {
       return res.status(404).json({ error: "User not found" });
     }
 
-    user.catch_probability = Math.min(
-      100,
-      Math.max(0, user.catch_probability - 15)
-    );
+    user.catch_probability = Math.min(100, Math.max(0, user.catch_probability - 15));
     await user.save();
 
-    return res
-      .status(200)
-      .json({ newCatchProbability: user.catch_probability });
+    return res.status(200).json({ newCatchProbability: user.catch_probability });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
@@ -635,10 +599,7 @@ const incrementTrustIndex = async (req, res) => {
       return res.status(404).json({ error: "User not found" });
     }
 
-    user.trust_index = Math.min(
-      100,
-      Math.max(0, user.trust_index + trust_index)
-    );
+    user.trust_index = Math.min(100, Math.max(0, user.trust_index + trust_index));
     await user.save();
 
     return res.status(200).json({ newTrustIndex: user.trust_index });
@@ -681,8 +642,7 @@ const updateUserStats = async (
         adjustedPercentageToAdd = 0;
       } else if (userTrust > 30) {
         const decayRate = 0.14;
-        adjustedPercentageToAdd =
-          percentageToAdd * Math.exp(-decayRate * criminalsCount);
+        adjustedPercentageToAdd = percentageToAdd * Math.exp(-decayRate * criminalsCount);
       }
     } else {
       adjustedPercentageToAdd = percentageToAdd;
@@ -692,9 +652,7 @@ const updateUserStats = async (
 
     let coeffTrustIndex = user.trust_index / 80;
     coeffTrustIndex = Math.max(coeffTrustIndex, 0);
-    let additionalPoints = Math.round(
-      pointsToAdd * coeffTrustIndex * user.coeffMulti
-    );
+    let additionalPoints = Math.round(pointsToAdd * coeffTrustIndex * user.coeffMulti);
 
     // On ajoute les points supplémentaires si tous les skins sont débloqués
     const newRewardTier = Math.floor((user.points + additionalPoints) / 100);
@@ -726,23 +684,15 @@ const updateUserStats = async (
 
     // Gestion des jours consécutifs joués
     const today = new Date();
-    const lastPlayedDate = user.lastPlayedDate
-      ? new Date(user.lastPlayedDate)
-      : null;
+    const lastPlayedDate = user.lastPlayedDate ? new Date(user.lastPlayedDate) : null;
     const yesterday = new Date();
     yesterday.setDate(yesterday.getDate() - 1);
 
     const formatDate = (date) => date.toISOString().slice(0, 10);
 
-    if (
-      lastPlayedDate &&
-      formatDate(lastPlayedDate) === formatDate(yesterday)
-    ) {
+    if (lastPlayedDate && formatDate(lastPlayedDate) === formatDate(yesterday)) {
       user.consecutiveDaysPlayed = (user.consecutiveDaysPlayed || 0) + 1;
-    } else if (
-      !lastPlayedDate ||
-      formatDate(lastPlayedDate) !== formatDate(today)
-    ) {
+    } else if (!lastPlayedDate || formatDate(lastPlayedDate) !== formatDate(today)) {
       user.consecutiveDaysPlayed = 1;
     }
 
@@ -844,9 +794,7 @@ const updateMessageReadByUserId = async (req, res) => {
     user.message_read = readStatus;
     await user.save();
 
-    return res
-      .status(200)
-      .json({ message: `User read status updated to ${readStatus}.` });
+    return res.status(200).json({ message: `User read status updated to ${readStatus}.` });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
@@ -865,8 +813,7 @@ const getUserDetailsById = async (req, res) => {
       "SELECT id, RANK() OVER (ORDER BY monthly_points DESC) as ranking FROM users",
       { type: QueryTypes.SELECT }
     );
-    const monthlyRanking =
-      monthlyRankings.find((r) => r.id === userId)?.ranking || -1;
+    const monthlyRanking = monthlyRankings.find((r) => r.id === userId)?.ranking || -1;
 
     // Récupérer le nombre de fois où l'utilisateur a été 1er au classement mensuel
     const user = await User.findByPk(userId);

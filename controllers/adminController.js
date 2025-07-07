@@ -24,9 +24,7 @@ const signup = async (req, res) => {
     });
     const adminInfo = admin.get({ plain: true });
     delete adminInfo.password;
-    res
-      .status(201)
-      .json({ message: "Admin created successfully", token, admin: adminInfo });
+    res.status(201).json({ message: "Admin created successfully", token, admin: adminInfo });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
@@ -38,10 +36,7 @@ const signin = async (req, res) => {
     if (!admin) {
       return res.status(404).json({ error: "Admin not found" });
     }
-    const isPasswordValid = await bcrypt.compare(
-      req.body.password,
-      admin.password
-    );
+    const isPasswordValid = await bcrypt.compare(req.body.password, admin.password);
     if (!isPasswordValid) {
       return res.status(401).json({ error: "Invalid password" });
     }
@@ -51,9 +46,7 @@ const signin = async (req, res) => {
     });
     const adminInfo = admin.get({ plain: true });
     delete adminInfo.password;
-    res
-      .status(200)
-      .json({ message: "Admin signed in successfully", token, admin: adminInfo });
+    res.status(200).json({ message: "Admin signed in successfully", token, admin: adminInfo });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }

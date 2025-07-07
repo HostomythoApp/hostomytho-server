@@ -25,28 +25,25 @@ router.get("/tutorialsCompleted/:userId", async function (req, res, next) {
   }
 });
 
-router.get(
-  "/tutorialCompleted/:userId/:gameId",
-  async function (req, res, next) {
-    try {
-      const { userId, gameId } = req.params;
-      const tutorialCompleted = await UserTutorial.findOne({
-        where: {
-          user_id: userId,
-          game_id: gameId,
-          completed: true,
-        },
-      });
-      if (tutorialCompleted) {
-        res.status(200).json({ completed: true });
-      } else {
-        res.status(200).json({ completed: false });
-      }
-    } catch (error) {
-      res.status(500).json({ error: error.message });
+router.get("/tutorialCompleted/:userId/:gameId", async function (req, res, next) {
+  try {
+    const { userId, gameId } = req.params;
+    const tutorialCompleted = await UserTutorial.findOne({
+      where: {
+        user_id: userId,
+        game_id: gameId,
+        completed: true,
+      },
+    });
+    if (tutorialCompleted) {
+      res.status(200).json({ completed: true });
+    } else {
+      res.status(200).json({ completed: false });
     }
+  } catch (error) {
+    res.status(500).json({ error: error.message });
   }
-);
+});
 
 router.post("/completeTutorial", userAuthMiddleware, async (req, res, next) => {
   try {

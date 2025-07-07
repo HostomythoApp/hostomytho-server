@@ -12,8 +12,7 @@ const { sequelize } = require("../service/db.js");
 const Op = Sequelize.Op;
 
 const createUserTextRating = async (userTextRating, transaction) => {
-  const { user_id, text_id, plausibility, vote_weight, sentence_positions } =
-    userTextRating;
+  const { user_id, text_id, plausibility, vote_weight, sentence_positions } = userTextRating;
   try {
     let group = await GroupTextRating.findOne({
       where: { text_id: text_id, sentence_positions: sentence_positions },
@@ -53,8 +52,7 @@ const createUserTextRating = async (userTextRating, transaction) => {
 };
 
 const createUserErrorDetail = async (userErrorDetail, transaction = null) => {
-  const { user_id, text_id, word_positions, vote_weight, content } =
-    userErrorDetail;
+  const { user_id, text_id, word_positions, vote_weight, content } = userErrorDetail;
 
   try {
     const newUserErrorDetail = await UserErrorDetail.create(
@@ -86,9 +84,7 @@ const getTextWithErrorValidatedNotPlayed = async (req, res) => {
       attributes: ["user_error_details_id"],
     });
 
-    const playedErrorIds = playedErrors.map(
-      (error) => error.user_error_details_id
-    );
+    const playedErrorIds = playedErrors.map((error) => error.user_error_details_id);
 
     // Recherche d'une erreur non jouée par l'utilisateur avec vote_weight supérieur à 50
     const userErrorDetail = await UserErrorDetail.findOne({
@@ -109,9 +105,7 @@ const getTextWithErrorValidatedNotPlayed = async (req, res) => {
     });
 
     if (!userErrorDetail) {
-      return res
-        .status(404)
-        .json({ error: "No text with unplayed errors found" });
+      return res.status(404).json({ error: "No text with unplayed errors found" });
     }
 
     userErrorDetail.text.tokens.sort((a, b) => a.position - b.position);
@@ -152,9 +146,7 @@ const getTextWithErrorValidated = async (req, res) => {
     });
 
     if (!userErrorDetail) {
-      return res
-        .status(404)
-        .json({ error: "No text with validated errors found" });
+      return res.status(404).json({ error: "No text with validated errors found" });
     }
 
     userErrorDetail.text.tokens.sort((a, b) => a.position - b.position);
@@ -196,9 +188,7 @@ const getTextWithErrorValidatedByErrorId = async (req, res) => {
     });
 
     if (!userErrorDetail) {
-      return res
-        .status(404)
-        .json({ error: "No text with validated errors found" });
+      return res.status(404).json({ error: "No text with validated errors found" });
     }
 
     userErrorDetail.text.tokens.sort((a, b) => a.position - b.position);

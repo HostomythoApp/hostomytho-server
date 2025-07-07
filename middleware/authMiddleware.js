@@ -18,9 +18,7 @@ const adminAuthMiddleware = (req, res, next) => {
         req.user = decoded;
         next();
       } else {
-        return res
-          .status(403)
-          .json({ error: "Accès refusé. Réservé aux administrateurs." });
+        return res.status(403).json({ error: "Accès refusé. Réservé aux administrateurs." });
       }
     } catch (error) {
       console.error("JWT Verification Error:", error);

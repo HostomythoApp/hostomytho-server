@@ -33,5 +33,4 @@ router.get("/", async function (req, res, next) {
 
 router.get("/byUserId", userAuthMiddleware, getAchievementsByUserId);
 
-
 module.exports = router;

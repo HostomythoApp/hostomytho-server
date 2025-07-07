@@ -14,14 +14,10 @@ const { exec } = require("child_process");
 const { userAuthMiddleware } = require("../middleware/authMiddleware");
 const { adminAuthMiddleware } = require("../middleware/authMiddleware");
 
-const mailjet = Mailjet.apiConnect(
-  process.env.MJ_APIKEY_PUBLIC,
-  process.env.MJ_APIKEY_PRIVATE,
-  {
-    config: {},
-    options: {},
-  }
-);
+const mailjet = Mailjet.apiConnect(process.env.MJ_APIKEY_PUBLIC, process.env.MJ_APIKEY_PRIVATE, {
+  config: {},
+  options: {},
+});
 
 // router.post("/refreshToken", async (req, res) => {
 //   const { refreshToken } = req.body;
@@ -107,8 +103,7 @@ router.post("/requestReset", async (req, res) => {
       );
     }
     res.status(200).json({
-      message:
-        "Si votre email est dans notre système, un mail de réinitialisation a été envoyé.",
+      message: "Si votre email est dans notre système, un mail de réinitialisation a été envoyé.",
     });
   } catch (error) {
     console.error(error);
@@ -217,9 +212,7 @@ router.get("/messageMenu", async function (req, res, next) {
       !messageType ||
       (messageType !== "home_not_connected" && messageType !== "home_connected")
     ) {
-      return res
-        .status(400)
-        .json({ error: "Invalid or missing messageType parameter." });
+      return res.status(400).json({ error: "Invalid or missing messageType parameter." });
     }
 
     const messageMenu = await MessageMenu.findOne({
@@ -272,9 +265,7 @@ router.get("/getDefinition", async (req, res) => {
 });
 
 async function fetchDefinition(lemma) {
-  const wikiUrl = `https://fr.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(
-    lemma
-  )}`;
+  const wikiUrl = `https://fr.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(lemma)}`;
   const response = await fetch(wikiUrl);
   const json = await response.json();
 
@@ -346,9 +337,7 @@ async function fetchTextSearch(lemma) {
 }
 
 async function fetchSummaryFromWikipedia(title) {
-  const url = `https://fr.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(
-    title
-  )}`;
+  const url = `https://fr.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(title)}`;
   const response = await fetch(url);
   const json = await response.json();
   if (json.extract) {

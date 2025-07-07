@@ -10,36 +10,24 @@ const {
 const { Op } = require("sequelize");
 const { Sequelize } = require("sequelize");
 const { sequelize } = require("../service/db.js");
-const {
-  createUserTextRating,
-  createUserErrorDetail,
-} = require("../controllers/errorController");
-const {
-  updateUserStats,
-  getUserById,
-} = require("../controllers/userController");
+const { createUserTextRating, createUserErrorDetail } = require("../controllers/errorController");
+const { updateUserStats, getUserById } = require("../controllers/userController");
 const { getVariableFromCache } = require("../service/cache");
 
 const getText = async (req, res) => {
   try {
     const randomNumber = Math.floor(Math.random() * 100);
-    const text_length_in_game =
-      getVariableFromCache("text_length_in_game") || 110;
-    const percentage_test_mythooupas =
-      getVariableFromCache("percentage_test_mythooupas") || 25;
+    const text_length_in_game = getVariableFromCache("text_length_in_game") || 110;
+    const percentage_test_mythooupas = getVariableFromCache("percentage_test_mythooupas") || 25;
     const text_already_treated_mythooupas =
       getVariableFromCache("text_already_treated_mythooupas") || 20;
 
-    const sumTextAlreadyTreated =
-      percentage_test_mythooupas + text_already_treated_mythooupas;
+    const sumTextAlreadyTreated = percentage_test_mythooupas + text_already_treated_mythooupas;
     let text, group;
 
     if (randomNumber < percentage_test_mythooupas) {
       return await getTextTestPlausibility(req, res);
-    } else if (
-      randomNumber >= percentage_test_mythooupas &&
-      randomNumber < sumTextAlreadyTreated
-    ) {
+    } else if (randomNumber >= percentage_test_mythooupas && randomNumber < sumTextAlreadyTreated) {
       // Choix d'un texte déjà joué tiré de GroupTextRating
       // TODO: Prevent getting a group text rating the player already partook in
       group = await GroupTextRating.findOne({
@@ -66,9 +54,7 @@ const getText = async (req, res) => {
       );
       let result = {
         id: group.text.id,
-        sentence_positions: sentences
-          .map((sentence) => sentence.position)
-          .join(", "),
+        sentence_positions: sentences.map((sentence) => sentence.position).join(", "),
         tokens: tokens,
       };
 
@@ -99,15 +85,11 @@ const getText = async (req, res) => {
       });
 
       if (sentences.length === 0) {
-        return res
-          .status(404)
-          .json({ error: "Text " + text.id + " has no sentences" });
+        return res.status(404).json({ error: "Text " + text.id + " has no sentences" });
       }
 
       // Calculer le nombre total de tokens pour chaque phrase
-      let totalTokensBySentence = sentences.map(
-        (sentence) => sentence.tokens.length
-      );
+      let totalTokensBySentence = sentences.map((sentence) => sentence.tokens.length);
 
       // Calculer le total cumulatif de tokens pour identifier les points de départ possibles
       let cumulativeTokens = totalTokensBySentence.reduce((acc, curr, i) => {
@@ -124,40 +106,26 @@ const getText = async (req, res) => {
       } else {
         // Déterminer le maxStartIndex correctement sans utiliser startIndex dans le calcul
         const validStartIndexes = cumulativeTokens
-          .map((cumulative, idx) =>
-            cumulative >= text_length_in_game ? idx : -1
-          )
+          .map((cumulative, idx) => (cumulative >= text_length_in_game ? idx : -1))
           .filter((idx) => idx !== -1);
 
         if (validStartIndexes.length === 0) {
-          return res
-            .status(404)
-            .json({ error: "Cannot find a suitable start position" });
+          return res.status(404).json({ error: "Cannot find a suitable start position" });
         }
 
         const randomValidIndex =
-          validStartIndexes[
-            Math.floor(Math.random() * validStartIndexes.length)
-          ];
+          validStartIndexes[Math.floor(Math.random() * validStartIndexes.length)];
         const startIndex = randomValidIndex;
 
         let startFromEnd = Math.random() < 0.5; // 50% chance de commencer par la fin
         if (startFromEnd) {
-          for (
-            let i = sentences.length - 1;
-            i >= 0 && totalTokens < text_length_in_game;
-            i--
-          ) {
+          for (let i = sentences.length - 1; i >= 0 && totalTokens < text_length_in_game; i--) {
             selectedSentences.unshift(sentences[i]); // Ajouter au début pour conserver l'ordre
             totalTokens += sentences[i].tokens.length;
             if (totalTokens >= text_length_in_game) break;
           }
         } else {
-          for (
-            let i = startIndex;
-            i < sentences.length && totalTokens < text_length_in_game;
-            i++
-          ) {
+          for (let i = startIndex; i < sentences.length && totalTokens < text_length_in_game; i++) {
             selectedSentences.push(sentences[i]);
             totalTokens += sentences[i].tokens.length;
             if (totalTokens >= text_length_in_game) break;
@@ -233,16 +201,12 @@ const sendResponse = async (req, res) => {
   try {
     transaction = await sequelize.transaction();
     const textDetails = await getTextDetailsById(textId);
-    const basePointsEarnedMythoOuPas =
-      getVariableFromCache("base_points_earned_mythooupas") || 14;
-    const base_catchability_mythooupas =
-      getVariableFromCache("base_catchability_mythooupas") || 5;
+    const basePointsEarnedMythoOuPas = getVariableFromCache("base_points_earned_mythooupas") || 14;
+    const base_catchability_mythooupas = getVariableFromCache("base_catchability_mythooupas") || 5;
     const user = await getUserById(userId);
     if (!textDetails) {
       await transaction.rollback();
-      return res
-        .status(404)
-        .json({ success: false, message: "Text not found" });
+      return res.status(404).json({ success: false, message: "Text not found" });
     }
 
     await Text.increment("nb_of_treatments", {
@@ -252,7 +216,6 @@ const sendResponse = async (req, res) => {
     });
 
     if (textDetails.is_plausibility_test) {
-
       let checkResult = await checkUserSelectionPlausibility(
         textId,
         userErrorDetails,
@@ -292,29 +255,20 @@ const sendResponse = async (req, res) => {
           spec.word_positions.split(",").map((pos) => parseInt(pos))
         );
 
-        if (
-          !checkResult.isErrorDetailsCorrect &&
-          checkResult.testPlausibilityPassed
-        ) {
+        if (!checkResult.isErrorDetailsCorrect && checkResult.testPlausibilityPassed) {
           pointsToAdd = basePointsEarnedMythoOuPas;
           percentageToAdd = base_catchability_mythooupas;
           trustIndexIncrement = 1;
           success = false;
           message = `Vous avez bien estimé la plausibilité, mais voilà les erreurs qu'il fallait trouver :\n${correctSpecification}`;
-        } else if (
-          !checkResult.isErrorDetailsCorrect &&
-          !checkResult.testPlausibilityPassed
-        ) {
+        } else if (!checkResult.isErrorDetailsCorrect && !checkResult.testPlausibilityPassed) {
           pointsToAdd = 0;
           percentageToAdd = 0;
           trustIndexIncrement = -1;
           success = false;
           message = `${checkResult.reasonForRate}\nLes erreurs à trouver étaient :\n${correctSpecification}`;
           correctPlausibility = checkResult.correctPlausibility;
-        } else if (
-          checkResult.isErrorDetailsCorrect &&
-          !checkResult.testPlausibilityPassed
-        ) {
+        } else if (checkResult.isErrorDetailsCorrect && !checkResult.testPlausibilityPassed) {
           pointsToAdd = basePointsEarnedMythoOuPas + userErrorDetails.length;
           percentageToAdd = base_catchability_mythooupas;
           trustIndexIncrement = 1;
@@ -322,12 +276,8 @@ const sendResponse = async (req, res) => {
           message =
             "Vous avez bien identifié les zones de doute, mais la plausibilité estimée était incorrecte.";
           correctPlausibility = checkResult.correctPlausibility;
-        } else if (
-          checkResult.isErrorDetailsCorrect &&
-          checkResult.testPlausibilityPassed
-        ) {
-          pointsToAdd =
-            basePointsEarnedMythoOuPas + 2 + userErrorDetails.length;
+        } else if (checkResult.isErrorDetailsCorrect && checkResult.testPlausibilityPassed) {
+          pointsToAdd = basePointsEarnedMythoOuPas + 2 + userErrorDetails.length;
           percentageToAdd = base_catchability_mythooupas + 1;
           trustIndexIncrement = 2;
           success = true;
@@ -336,20 +286,17 @@ const sendResponse = async (req, res) => {
     } else {
       const baseWeight = user.trust_index;
       const specificationWeight =
-        user.status === "medecin"
-          ? baseWeight + baseWeight * 0.3
-          : baseWeight;
-      const { newUserTextRating, isNewGroup, group } =
-        await createUserTextRating(
-          {
-            user_id: userId,
-            text_id: textId,
-            plausibility: userRateSelected,
-            vote_weight: specificationWeight,
-            sentence_positions: sentencePositions,
-          },
-          transaction
-        );
+        user.status === "medecin" ? baseWeight + baseWeight * 0.3 : baseWeight;
+      const { newUserTextRating, isNewGroup, group } = await createUserTextRating(
+        {
+          user_id: userId,
+          text_id: textId,
+          plausibility: userRateSelected,
+          vote_weight: specificationWeight,
+          sentence_positions: sentencePositions,
+        },
+        transaction
+      );
 
       for (let errorDetail of userErrorDetails) {
         await createUserErrorDetail(
@@ -368,13 +315,11 @@ const sendResponse = async (req, res) => {
         groupId = newUserTextRating.group_id;
 
         if (isNewGroup) {
-
           // Initialiser les valeurs dans `group`
           group.average_plausibility = userRateSelected;
           group.votes_count = 1;
           await group.save({ transaction });
         } else {
-
           // Récupérer tous les votes pour ce groupe
           const allRatingsForGroup = await UserTextRating.findAll({
             where: { group_id: groupId },
@@ -388,14 +333,11 @@ const sendResponse = async (req, res) => {
               0
             );
             const weightedSum = allRatingsForGroup.reduce(
-              (acc, rating) =>
-                acc + parseFloat(rating.plausibility) * rating.vote_weight,
+              (acc, rating) => acc + parseFloat(rating.plausibility) * rating.vote_weight,
               0
             );
 
-            averagePlausibility = Math.round(
-              totalWeight > 0 ? weightedSum / totalWeight : 0
-            );
+            averagePlausibility = Math.round(totalWeight > 0 ? weightedSum / totalWeight : 0);
 
             // Comparer la note utilisateur avec cette moyenne
             success = Math.abs(averagePlausibility - userRateSelected) <= 13;
@@ -413,13 +355,10 @@ const sendResponse = async (req, res) => {
 
             // Inclure le dernier vote dans le calcul pour la mise à jour en BDD
             const totalWeightWithLastVote = totalWeight + user.trust_index;
-            const weightedSumWithLastVote =
-              weightedSum + userRateSelected * user.trust_index;
+            const weightedSumWithLastVote = weightedSum + userRateSelected * user.trust_index;
 
             const newAveragePlausibility = Math.round(
-              totalWeightWithLastVote > 0
-                ? weightedSumWithLastVote / totalWeightWithLastVote
-                : 0
+              totalWeightWithLastVote > 0 ? weightedSumWithLastVote / totalWeightWithLastVote : 0
             );
 
             // Mettre à jour directement `group`
@@ -484,9 +423,7 @@ const sendResponse = async (req, res) => {
   } catch (error) {
     if (transaction) await transaction.rollback();
     console.error("Error in sendResponse:", error.message);
-    return res
-      .status(500)
-      .json({ success: false, message: "Internal server error" });
+    return res.status(500).json({ success: false, message: "Internal server error" });
   }
 };
 
@@ -528,9 +465,7 @@ const checkUserSelectionPlausibility = async (
   try {
     const textDetails = await getTextDetailsById(textId);
     if (!textDetails) throw new Error("Text details not found");
-    const testPlausibilityError = await getTestPlausibilityErrorByTextId(
-      textId
-    );
+    const testPlausibilityError = await getTestPlausibilityErrorByTextId(textId);
 
     const textPlausibility = parseFloat(textDetails.test_plausibility);
     const isPlausibilityCorrect =
@@ -541,11 +476,7 @@ const checkUserSelectionPlausibility = async (
 
     const isErrorDetailsCorrect =
       testPlausibilityError.length > 0
-        ? areUserErrorsCorrect(
-            userErrorDetails,
-            testPlausibilityError,
-            tokenErrorMargin
-          )
+        ? areUserErrorsCorrect(userErrorDetails, testPlausibilityError, tokenErrorMargin)
         : true;
 
     return {
@@ -565,23 +496,15 @@ const checkUserSelectionPlausibility = async (
   }
 };
 
-const areUserErrorsCorrect = (
-  userErrorDetails,
-  testPlausibilityError,
-  tokenErrorMargin
-) => {
+const areUserErrorsCorrect = (userErrorDetails, testPlausibilityError, tokenErrorMargin) => {
   const allTestErrorPositions = testPlausibilityError.flatMap((spec) =>
     spec.word_positions.split(",").map((pos) => parseInt(pos))
   );
 
   return userErrorDetails.some((errorDetail) => {
-    const userWordPositions = errorDetail.word_positions
-      .split(",")
-      .map((pos) => parseInt(pos));
+    const userWordPositions = errorDetail.word_positions.split(",").map((pos) => parseInt(pos));
     return userWordPositions.some((userPos) =>
-      allTestErrorPositions.some(
-        (testPos) => Math.abs(testPos - userPos) <= tokenErrorMargin
-      )
+      allTestErrorPositions.some((testPos) => Math.abs(testPos - userPos) <= tokenErrorMargin)
     );
   });
 };
@@ -604,13 +527,8 @@ const getTestPlausibilityErrorByTextId = async (textId) => {
       };
     });
   } catch (error) {
-    console.error(
-      "Error fetching test plausibility errors from UserErrorDetail:",
-      error
-    );
-    throw new Error(
-      "Error fetching test plausibility errors from UserErrorDetail"
-    );
+    console.error("Error fetching test plausibility errors from UserErrorDetail:", error);
+    throw new Error("Error fetching test plausibility errors from UserErrorDetail");
   }
 };
 
@@ -618,11 +536,7 @@ const getTextDetailsById = async (textId) => {
   try {
     const textDetails = await Text.findOne({
       where: { id: textId },
-      attributes: [
-        "test_plausibility",
-        "reason_for_rate",
-        "is_plausibility_test",
-      ],
+      attributes: ["test_plausibility", "reason_for_rate", "is_plausibility_test"],
     });
     return textDetails;
   } catch (error) {
@@ -645,9 +559,7 @@ async function extractSentencesForGroup(group) {
   if (group.sentence_positions === "full") {
     where = { text_id: group.text.id };
   } else {
-    const positions = group.sentence_positions
-      .split(",")
-      .map((pos) => parseInt(pos));
+    const positions = group.sentence_positions.split(",").map((pos) => parseInt(pos));
     where = {
       text_id: group.text.id,
       position: positions,
@@ -665,4 +577,3 @@ async function extractSentencesForGroup(group) {
     ],
   });
 }
-

@@ -28,7 +28,7 @@ module.exports = (sequelize, DataTypes) => {
       },
       game_type: {
         type: DataTypes.ENUM,
-        values: ['hypothesis', 'condition', 'negation', 'plausibility', 'link_entity'],
+        values: ["hypothesis", "condition", "negation", "plausibility", "link_entity"],
         allowNull: false,
       },
     },
@@ -36,8 +36,8 @@ module.exports = (sequelize, DataTypes) => {
       sequelize,
       modelName: "user_game_texts",
       timestamps: true,
-      createdAt: 'created_at',
-      updatedAt: false, 
+      createdAt: "created_at",
+      updatedAt: false,
     }
   );
 

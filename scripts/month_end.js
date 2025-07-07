@@ -1,36 +1,34 @@
-
 const { Sequelize, DataTypes, QueryTypes } = require("sequelize");
 const path = require("path");
 require("dotenv").config({ path: path.join(__dirname, "../.env") });
 
-const sequelize = new Sequelize(
-  process.env.DB_NAME,
-  process.env.DB_USER,
-  process.env.DB_PASSWORD,
+const sequelize = new Sequelize(process.env.DB_NAME, process.env.DB_USER, process.env.DB_PASSWORD, {
+  host: process.env.DB_HOST,
+  dialect: "mysql",
+  timezone: "+02:00",
+  define: {
+    timestamps: false,
+    freezeTableName: true,
+  },
+});
+
+const UserAchievement = sequelize.define(
+  "UserAchievement",
   {
-    host: process.env.DB_HOST,
-    dialect: "mysql",
-    timezone: "+02:00",
-    define: {
-      timestamps: false,
-      freezeTableName: true,
+    user_id: {
+      type: DataTypes.INTEGER,
+      primaryKey: true,
     },
+    achievement_id: {
+      type: DataTypes.INTEGER,
+      primaryKey: true,
+    },
+    notified: DataTypes.INTEGER,
+  },
+  {
+    tableName: "user_achievement",
   }
 );
-
-const UserAchievement = sequelize.define('UserAchievement', {
-  user_id: {
-    type: DataTypes.INTEGER,
-    primaryKey: true
-  },
-  achievement_id: {
-    type: DataTypes.INTEGER,
-    primaryKey: true
-  },
-  notified: DataTypes.INTEGER
-}, {
-  tableName: 'user_achievement'
-});
 
 const logToFile = (message) => {
   console.log(message);
@@ -42,8 +40,8 @@ async function addAchievementIfNotExists(userId, achievementId) {
     defaults: {
       user_id: userId,
       achievement_id: achievementId,
-      notified: 0
-    }
+      notified: 0,
+    },
   });
   if (created) {
     logToFile(`Haut fait id ${achievementId} attribué à l'utilisateur ${userId}`);
@@ -72,7 +70,15 @@ const resetMonthlyPoints = async () => {
 
       await sequelize.query(
         "INSERT INTO monthly_winners (user_id, username, points, ranking) VALUES (?, ?, ?, ?)",
-        { replacements: [winner.id, winner.username, winner.monthly_points, winners.indexOf(winner) + 1], type: QueryTypes.INSERT }
+        {
+          replacements: [
+            winner.id,
+            winner.username,
+            winner.monthly_points,
+            winners.indexOf(winner) + 1,
+          ],
+          type: QueryTypes.INSERT,
+        }
       );
 
       await addAchievementIfNotExists(winner.id, 22); // Adding achievement 22

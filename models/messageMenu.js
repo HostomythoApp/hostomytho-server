@@ -23,7 +23,7 @@ module.exports = (sequelize, DataTypes) => {
       },
       message_type: {
         type: DataTypes.ENUM,
-        values: ['home_not_connected', 'home_connected'],
+        values: ["home_not_connected", "home_connected"],
         allowNull: true,
       },
     },

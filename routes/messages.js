@@ -12,43 +12,31 @@ const contactFormLimiter = rateLimit({
   message: "Trop de demandes depuis cette IP, veuillez réessayer plus tard.",
 });
 
-router.post(
-  "/contactMessage",
-  contactFormLimiter,
-  async function (req, res, next) {
-    try {
-      const { user_id, username, email, subject, message } = req.body;
+router.post("/contactMessage", contactFormLimiter, async function (req, res, next) {
+  try {
+    const { user_id, username, email, subject, message } = req.body;
 
-      const newContactMessage = await MessageContact.create({
-        user_id,
-        username,
-        email,
-        subject,
-        message,
-      });
+    const newContactMessage = await MessageContact.create({
+      user_id,
+      username,
+      email,
+      subject,
+      message,
+    });
 
-      res.json(newContactMessage);
-    } catch (err) {
-      next(err);
-    }
+    res.json(newContactMessage);
+  } catch (err) {
+    next(err);
   }
-);
+});
 
-router.delete(
-  "/deleteMessage/:id",
-  adminAuthMiddleware,
-  messagesController.deleteMessage
-);
+router.delete("/deleteMessage/:id", adminAuthMiddleware, messagesController.deleteMessage);
 
 router.get("/getMessages", adminAuthMiddleware, messagesController.getMessages);
 
 // **************** Message menu ********************
 
-router.put(
-  "/notifyAllUsers",
-  adminAuthMiddleware,
-  messagesController.notifyAllUsers
-);
+router.put("/notifyAllUsers", adminAuthMiddleware, messagesController.notifyAllUsers);
 
 router.get("/messagesMenu", messagesController.getMessagesMenu);
 

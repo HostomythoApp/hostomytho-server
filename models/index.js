@@ -29,18 +29,9 @@ const userCommentVotesModel = require("./userCommentVotes");
 const VariableModel = require("./variable");
 
 const Game = require("./games.js")(sequelize, Sequelize.DataTypes);
-const UserTutorial = require("./userTutorial.js")(
-  sequelize,
-  Sequelize.DataTypes
-);
-const TestSpecification = require("./testSpecification")(
-  sequelize,
-  Sequelize.DataTypes
-);
-const UserAchievement = require("./userAchievement.js")(
-  sequelize,
-  Sequelize.DataTypes
-);
+const UserTutorial = require("./userTutorial.js")(sequelize, Sequelize.DataTypes);
+const TestSpecification = require("./testSpecification")(sequelize, Sequelize.DataTypes);
+const UserAchievement = require("./userAchievement.js")(sequelize, Sequelize.DataTypes);
 const UserSkin = require("./userSkin.js")(sequelize, Sequelize.DataTypes);
 const UserGameText = UserGameTextModel(sequelize, Sequelize.DataTypes);
 const Token = TokenModel(sequelize, Sequelize.DataTypes);
@@ -50,10 +41,7 @@ const User = UserModel(sequelize, Sequelize.DataTypes);
 const Text = TextModel(sequelize, Sequelize.DataTypes);
 const Sentence = SentenceModel(sequelize, Sequelize.DataTypes);
 const Variable = VariableModel(sequelize, Sequelize.DataTypes);
-const UserSentenceSpecification = UserSentenceSpecificationModel(
-  sequelize,
-  Sequelize.DataTypes
-);
+const UserSentenceSpecification = UserSentenceSpecificationModel(sequelize, Sequelize.DataTypes);
 const MessageMenu = MessageMenuModel(sequelize, Sequelize.DataTypes);
 const UserTextRating = UserTextRatingModel(sequelize, Sequelize.DataTypes);
 const UserPlayedErrors = UserPlayedErrorsModel(sequelize, Sequelize.DataTypes);
@@ -63,28 +51,16 @@ const UserTypingErrors = UserTypingErrorsModel(sequelize, Sequelize.DataTypes);
 const Criminal = CriminalModel(sequelize, Sequelize.DataTypes);
 const UserCriminal = UserCriminalModel(sequelize, Sequelize.DataTypes);
 const MessageContact = MessageContactModel(sequelize, Sequelize.DataTypes);
-const PasswordResetToken = PasswordResetTokenModel(
-  sequelize,
-  Sequelize.DataTypes
-);
-const RefreshToken = RefreshTokenModel(
-  sequelize,
-  Sequelize.DataTypes
-);
+const PasswordResetToken = PasswordResetTokenModel(sequelize, Sequelize.DataTypes);
+const RefreshToken = RefreshTokenModel(sequelize, Sequelize.DataTypes);
 const MonthlyWinners = MonthlyWinnersModel(sequelize, Sequelize.DataTypes);
-const TestPlausibilityError = TestPlausibilityErrorModel(
-  sequelize,
-  Sequelize.DataTypes
-);
+const TestPlausibilityError = TestPlausibilityErrorModel(sequelize, Sequelize.DataTypes);
 const GroupTextRating = GroupTextRatingModel(sequelize, Sequelize.DataTypes);
 const UserCommentsGroupTextRating = UserCommentsGroupTextRatingModel(
   sequelize,
   Sequelize.DataTypes
 );
-const UserCommentVotes = userCommentVotesModel(
-  sequelize,
-  Sequelize.DataTypes
-);
+const UserCommentVotes = userCommentVotesModel(sequelize, Sequelize.DataTypes);
 const models = {
   User: User,
   Achievement: Achievement,
@@ -115,7 +91,7 @@ const models = {
   GroupTextRating,
   UserCommentsGroupTextRating,
   UserCommentVotes,
-  Variable
+  Variable,
 };
 
 // *************** Associations User & MonthlyWinners *******************
@@ -304,8 +280,8 @@ UserCommentsGroupTextRating.belongsTo(GroupTextRating, {
   foreignKey: "group_id",
 });
 GroupTextRating.belongsTo(Text, {
-  foreignKey: 'text_id',
-  targetKey: 'id'
+  foreignKey: "text_id",
+  targetKey: "id",
 });
 
 // *************** Associations UserCommentVotes *******************

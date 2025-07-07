@@ -21,10 +21,7 @@ router.get("/getUserRanking/:id", userController.getUserRanking);
 
 router.get("/getCoeffMultiByUserId/:id", userController.getCoeffMultiByUserId);
 
-router.get(
-  "/getMessageReadByUserId/:id",
-  userController.getMessageReadByUserId
-);
+router.get("/getMessageReadByUserId/:id", userController.getMessageReadByUserId);
 
 router.put(
   "/updateMessageReadByUserId",
@@ -41,25 +38,15 @@ router.get("/getUserRankingRange/:id", userController.getUserRankingRange);
 router.get("/getUserDetailsById/:id", userController.getUserDetailsById);
 
 // Classement mensuel
-router.get(
-  "/getUsersOrderedByPointsInMonthly",
-  userController.getUsersOrderedByPointsInMonthly
-);
+router.get("/getUsersOrderedByPointsInMonthly", userController.getUsersOrderedByPointsInMonthly);
 
 // Décrémente proba
 router.put("/:id/catchProbability", userController.incrementCatchProbability);
 
-router.get(
-  "/getUserRankingRangeInMonthly/:id",
-  userController.getUserRankingRangeInMonthly
-);
+router.get("/getUserRankingRangeInMonthly/:id", userController.getUserRankingRangeInMonthly);
 router.get("/getTopMonthlyWinners", userController.getTopMonthlyWinners);
 
-router.put(
-  "/updateUserEmail",
-  userAuthMiddleware,
-  userController.updateUserEmail
-);
+router.put("/updateUserEmail", userAuthMiddleware, userController.updateUserEmail);
 
 router.put(
   "/incrementTutorialProgress",
@@ -67,11 +54,7 @@ router.put(
   userController.incrementTutorialProgress
 );
 
-router.put(
-  "/:id/resetCatchProbability",
-  userAuthMiddleware,
-  userController.resetCatchProbability
-);
+router.put("/:id/resetCatchProbability", userAuthMiddleware, userController.resetCatchProbability);
 
 router.get("/:id", adminOrUserMiddleware, async function (req, res, next) {
   try {
@@ -82,9 +65,7 @@ router.get("/:id", adminOrUserMiddleware, async function (req, res, next) {
       return res.status(404).json({ error: "User not found" });
     }
 
-    user.dataValues.created_at = moment(user.created_at)
-      .locale("fr")
-      .format("DD MMMM YYYY");
+    user.dataValues.created_at = moment(user.created_at).locale("fr").format("DD MMMM YYYY");
 
     res.status(200).json(user);
   } catch (error) {
@@ -96,10 +77,7 @@ router.get("/:id", adminOrUserMiddleware, async function (req, res, next) {
 router.delete("/:id", async function (req, res, next) {
   const userId = req.params.id;
   try {
-    const randomPassword = await bcrypt.hash(
-      Math.random().toString(36).slice(-8),
-      10
-    );
+    const randomPassword = await bcrypt.hash(Math.random().toString(36).slice(-8), 10);
     await User.update(
       {
         username: `user_${userId}`,

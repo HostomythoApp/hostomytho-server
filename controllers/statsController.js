@@ -4,7 +4,7 @@ const {
   UserTextRating,
   UserErrorDetail,
   UserTypingErrors,
-  UserSentenceSpecification
+  UserSentenceSpecification,
 } = require("../models");
 const { sequelize } = require("../service/db.js");
 
@@ -24,7 +24,6 @@ const generateWeeklySeries = (startDate, endDate) => {
   return dates;
 };
 
-
 // **************** Stats page ****************
 const getTotalUsersCount = async (req, res) => {
   try {
@@ -40,10 +39,13 @@ const getUserAnnotationsCount = async (req, res) => {
     const userId = req.user.id;
 
     const userErrorDetailsCount = await UserErrorDetail.count({ where: { user_id: userId } });
-    const userSentenceSpecificationCount = await UserSentenceSpecification.count({ where: { user_id: userId } });
+    const userSentenceSpecificationCount = await UserSentenceSpecification.count({
+      where: { user_id: userId },
+    });
     const userTypingErrorsCount = await UserTypingErrors.count({ where: { user_id: userId } });
 
-    const totalAnnotations = userErrorDetailsCount + userSentenceSpecificationCount + userTypingErrorsCount;
+    const totalAnnotations =
+      userErrorDetailsCount + userSentenceSpecificationCount + userTypingErrorsCount;
 
     res.status(200).json({ userAnnotations: totalAnnotations });
   } catch (error) {
@@ -51,21 +53,20 @@ const getUserAnnotationsCount = async (req, res) => {
   }
 };
 
-
 const getTotalAnnotationsCount = async (req, res) => {
   try {
     const userErrorDetailsCount = await UserErrorDetail.count();
     const userSentenceSpecificationCount = await UserSentenceSpecification.count();
     const userTypingErrorsCount = await UserTypingErrors.count();
 
-    const totalAnnotations = userErrorDetailsCount + userSentenceSpecificationCount + userTypingErrorsCount;
+    const totalAnnotations =
+      userErrorDetailsCount + userSentenceSpecificationCount + userTypingErrorsCount;
 
     res.status(200).json({ totalAnnotations });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
 };
-
 
 // **************** User ****************
 const getUserRegistrationsDate = async (req, res) => {
@@ -81,16 +82,16 @@ const getUserRegistrationsDate = async (req, res) => {
       attributes: [
         [sequelize.fn("DATE_FORMAT", sequelize.col("created_at"), "%Y%u"), "week"],
         [sequelize.fn("COUNT", sequelize.col("id")), "count"],
-        "status"  // Ajouter le champ status à la sélection
+        "status", // Ajouter le champ status à la sélection
       ],
-      group: [sequelize.fn("DATE_FORMAT", sequelize.col("created_at"), "%Y%u"), "status"],  // Regrouper également par status
+      group: [sequelize.fn("DATE_FORMAT", sequelize.col("created_at"), "%Y%u"), "status"], // Regrouper également par status
       order: [[sequelize.fn("DATE_FORMAT", sequelize.col("created_at"), "%Y%u"), "ASC"]],
     });
 
     const weeklyData = generateWeeklySeries(earliest, latest);
 
     // Initialiser les données pour chaque type de status
-    weeklyData.forEach(week => {
+    weeklyData.forEach((week) => {
       week.medecin = 0;
       week.autre = 0;
       week.inconnu = 0;
@@ -110,7 +111,6 @@ const getUserRegistrationsDate = async (req, res) => {
   }
 };
 
-
 const getCumulativeUserRegistrations = async (req, res) => {
   try {
     const earliest = await User.min("created_at");
@@ -122,10 +122,7 @@ const getCumulativeUserRegistrations = async (req, res) => {
 
     const results = await User.findAll({
       attributes: [
-        [
-          sequelize.fn("DATE_FORMAT", sequelize.col("created_at"), "%Y%u"),
-          "week",
-        ],
+        [sequelize.fn("DATE_FORMAT", sequelize.col("created_at"), "%Y%u"), "week"],
         [sequelize.fn("COUNT", sequelize.col("id")), "count"],
       ],
       group: [sequelize.fn("DATE_FORMAT", sequelize.col("created_at"), "%Y%u")],
@@ -146,8 +143,7 @@ const getCumulativeUserRegistrations = async (req, res) => {
 
     for (let i = 0; i < weeklyData.length; i++) {
       if (i > 0) {
-        weeklyData[i].cumulativeCount =
-          weeklyData[i].count + weeklyData[i - 1].cumulativeCount;
+        weeklyData[i].cumulativeCount = weeklyData[i].count + weeklyData[i - 1].cumulativeCount;
       }
     }
 
@@ -160,11 +156,8 @@ const getCumulativeUserRegistrations = async (req, res) => {
 const getUserTypesCount = async (req, res) => {
   try {
     const results = await User.findAll({
-      attributes: [
-        "status",
-        [sequelize.fn("COUNT", sequelize.col("id")), "count"]
-      ],
-      group: ["status"]
+      attributes: ["status", [sequelize.fn("COUNT", sequelize.col("id")), "count"]],
+      group: ["status"],
     });
 
     res.status(200).json(results);
@@ -175,14 +168,14 @@ const getUserTypesCount = async (req, res) => {
 
 // **************** All games ****************
 async function getCumulativeData(model, modelName, globalEarliest) {
-  const latest = await model.max("created_at") || new Date();
+  const latest = (await model.max("created_at")) || new Date();
 
   const results = await model.findAll({
     attributes: [
       [sequelize.fn("DATE_FORMAT", sequelize.col("created_at"), "%Y%u"), "week"],
       [sequelize.fn("COUNT", sequelize.col("id")), "count"],
     ],
-    group: [sequelize.fn("DATE_FORMAT", sequelize.col("created_at"), "%Y%u")]
+    group: [sequelize.fn("DATE_FORMAT", sequelize.col("created_at"), "%Y%u")],
   });
 
   let weeklyData = generateWeeklySeries(globalEarliest, latest);
@@ -200,7 +193,10 @@ async function getCumulativeData(model, modelName, globalEarliest) {
 
   for (let i = 0; i < weeklyData.length; i++) {
     if (i > 0) {
-      weeklyData[i][`cumulative${modelName}`] = weeklyData[i][`cumulative${modelName}`] !== undefined ? weeklyData[i][`cumulative${modelName}`] : weeklyData[i - 1][`cumulative${modelName}`];
+      weeklyData[i][`cumulative${modelName}`] =
+        weeklyData[i][`cumulative${modelName}`] !== undefined
+          ? weeklyData[i][`cumulative${modelName}`]
+          : weeklyData[i - 1][`cumulative${modelName}`];
     } else {
       weeklyData[i][`cumulative${modelName}`] = weeklyData[i][`cumulative${modelName}`] || 0;
     }
@@ -208,20 +204,25 @@ async function getCumulativeData(model, modelName, globalEarliest) {
   return weeklyData;
 }
 
-
 async function getCumulativeAnnotationsGames(req, res) {
   try {
-    const globalStartDate = '2024-03-04';
+    const globalStartDate = "2024-03-04";
 
-    const textRatings = await getCumulativeData(UserTextRating, 'TextRating', globalStartDate);
-    const typingErrors = await getCumulativeData(UserTypingErrors, 'TypingErrors', globalStartDate);
-    const sentenceSpecifications = await getCumulativeData(UserSentenceSpecification, 'SentenceSpecification', globalStartDate);
+    const textRatings = await getCumulativeData(UserTextRating, "TextRating", globalStartDate);
+    const typingErrors = await getCumulativeData(UserTypingErrors, "TypingErrors", globalStartDate);
+    const sentenceSpecifications = await getCumulativeData(
+      UserSentenceSpecification,
+      "SentenceSpecification",
+      globalStartDate
+    );
 
     const combinedData = textRatings.map((week, index) => ({
       date: week.date,
       cumulativeTextRating: week.cumulativeTextRating || 0,
       cumulativeTypingErrors: typingErrors[index] ? typingErrors[index].cumulativeTypingErrors : 0,
-      cumulativeSentenceSpecification: sentenceSpecifications[index] ? sentenceSpecifications[index].cumulativeSentenceSpecification : 0,
+      cumulativeSentenceSpecification: sentenceSpecifications[index]
+        ? sentenceSpecifications[index].cumulativeSentenceSpecification
+        : 0,
     }));
 
     res.status(200).json(combinedData);
@@ -229,7 +230,6 @@ async function getCumulativeAnnotationsGames(req, res) {
     res.status(500).json({ error: error.message });
   }
 }
-
 
 // **************** UserTextRating ****************
 const getRatingPlausibilityDate = async (req, res) => {
@@ -243,10 +243,7 @@ const getRatingPlausibilityDate = async (req, res) => {
 
     const results = await UserTextRating.findAll({
       attributes: [
-        [
-          sequelize.fn("DATE_FORMAT", sequelize.col("created_at"), "%Y%u"),
-          "week",
-        ],
+        [sequelize.fn("DATE_FORMAT", sequelize.col("created_at"), "%Y%u"), "week"],
         [sequelize.fn("COUNT", sequelize.col("id")), "count"],
       ],
       group: [sequelize.fn("DATE_FORMAT", sequelize.col("created_at"), "%Y%u")],
@@ -279,10 +276,7 @@ const getCumulativeRatingPlausibility = async (req, res) => {
 
     const results = await UserTextRating.findAll({
       attributes: [
-        [
-          sequelize.fn("DATE_FORMAT", sequelize.col("created_at"), "%Y%u"),
-          "week",
-        ],
+        [sequelize.fn("DATE_FORMAT", sequelize.col("created_at"), "%Y%u"), "week"],
         [sequelize.fn("COUNT", sequelize.col("id")), "count"],
       ],
       group: [sequelize.fn("DATE_FORMAT", sequelize.col("created_at"), "%Y%u")],
@@ -303,8 +297,7 @@ const getCumulativeRatingPlausibility = async (req, res) => {
 
     for (let i = 0; i < weeklyData.length; i++) {
       if (i > 0) {
-        weeklyData[i].cumulativeCount =
-          weeklyData[i].count + weeklyData[i - 1].cumulativeCount;
+        weeklyData[i].cumulativeCount = weeklyData[i].count + weeklyData[i - 1].cumulativeCount;
       }
     }
 
@@ -326,10 +319,7 @@ const getUserErrorDetailDate = async (req, res) => {
 
     const results = await UserErrorDetail.findAll({
       attributes: [
-        [
-          sequelize.fn("DATE_FORMAT", sequelize.col("created_at"), "%Y%u"),
-          "week",
-        ],
+        [sequelize.fn("DATE_FORMAT", sequelize.col("created_at"), "%Y%u"), "week"],
         [sequelize.fn("COUNT", sequelize.col("id")), "count"],
       ],
       group: [sequelize.fn("DATE_FORMAT", sequelize.col("created_at"), "%Y%u")],
@@ -362,10 +352,7 @@ const getCumulativeUserErrorDetail = async (req, res) => {
 
     const results = await UserErrorDetail.findAll({
       attributes: [
-        [
-          sequelize.fn("DATE_FORMAT", sequelize.col("created_at"), "%Y%u"),
-          "week",
-        ],
+        [sequelize.fn("DATE_FORMAT", sequelize.col("created_at"), "%Y%u"), "week"],
         [sequelize.fn("COUNT", sequelize.col("id")), "count"],
       ],
       group: [sequelize.fn("DATE_FORMAT", sequelize.col("created_at"), "%Y%u")],
@@ -386,8 +373,7 @@ const getCumulativeUserErrorDetail = async (req, res) => {
 
     for (let i = 0; i < weeklyData.length; i++) {
       if (i > 0) {
-        weeklyData[i].cumulativeCount =
-          weeklyData[i].count + weeklyData[i - 1].cumulativeCount;
+        weeklyData[i].cumulativeCount = weeklyData[i].count + weeklyData[i - 1].cumulativeCount;
       }
     }
 
@@ -409,10 +395,7 @@ const getUserTypingErrorsDate = async (req, res) => {
 
     const results = await UserTypingErrors.findAll({
       attributes: [
-        [
-          sequelize.fn("DATE_FORMAT", sequelize.col("created_at"), "%Y%u"),
-          "week",
-        ],
+        [sequelize.fn("DATE_FORMAT", sequelize.col("created_at"), "%Y%u"), "week"],
         [sequelize.fn("COUNT", sequelize.col("id")), "count"],
       ],
       group: [sequelize.fn("DATE_FORMAT", sequelize.col("created_at"), "%Y%u")],
@@ -445,10 +428,7 @@ const getCumulativeUserTypingErrors = async (req, res) => {
 
     const results = await UserTypingErrors.findAll({
       attributes: [
-        [
-          sequelize.fn("DATE_FORMAT", sequelize.col("created_at"), "%Y%u"),
-          "week",
-        ],
+        [sequelize.fn("DATE_FORMAT", sequelize.col("created_at"), "%Y%u"), "week"],
         [sequelize.fn("COUNT", sequelize.col("id")), "count"],
       ],
       group: [sequelize.fn("DATE_FORMAT", sequelize.col("created_at"), "%Y%u")],
@@ -469,8 +449,7 @@ const getCumulativeUserTypingErrors = async (req, res) => {
 
     for (let i = 0; i < weeklyData.length; i++) {
       if (i > 0) {
-        weeklyData[i].cumulativeCount =
-          weeklyData[i].count + weeklyData[i - 1].cumulativeCount;
+        weeklyData[i].cumulativeCount = weeklyData[i].count + weeklyData[i - 1].cumulativeCount;
       }
     }
 
@@ -492,10 +471,7 @@ const getUserSentenceSpecificationDate = async (req, res) => {
 
     const results = await UserSentenceSpecification.findAll({
       attributes: [
-        [
-          sequelize.fn("DATE_FORMAT", sequelize.col("created_at"), "%Y%u"),
-          "week",
-        ],
+        [sequelize.fn("DATE_FORMAT", sequelize.col("created_at"), "%Y%u"), "week"],
         [sequelize.fn("COUNT", sequelize.col("id")), "count"],
       ],
       group: [sequelize.fn("DATE_FORMAT", sequelize.col("created_at"), "%Y%u")],
@@ -528,10 +504,7 @@ const getCumulativeUserSentenceSpecification = async (req, res) => {
 
     const results = await UserSentenceSpecification.findAll({
       attributes: [
-        [
-          sequelize.fn("DATE_FORMAT", sequelize.col("created_at"), "%Y%u"),
-          "week",
-        ],
+        [sequelize.fn("DATE_FORMAT", sequelize.col("created_at"), "%Y%u"), "week"],
         [sequelize.fn("COUNT", sequelize.col("id")), "count"],
       ],
       group: [sequelize.fn("DATE_FORMAT", sequelize.col("created_at"), "%Y%u")],
@@ -552,8 +525,7 @@ const getCumulativeUserSentenceSpecification = async (req, res) => {
 
     for (let i = 0; i < weeklyData.length; i++) {
       if (i > 0) {
-        weeklyData[i].cumulativeCount =
-          weeklyData[i].count + weeklyData[i - 1].cumulativeCount;
+        weeklyData[i].cumulativeCount = weeklyData[i].count + weeklyData[i - 1].cumulativeCount;
       }
     }
 

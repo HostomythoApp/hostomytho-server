@@ -13,20 +13,18 @@ const loadVariableCache = async () => {
 
 // Rafraîchir une variable spécifique dans le cache après modification
 const refreshVariableInCache = async (key, value = null) => {
-  
-    // Si la valeur est passée, l'utiliser directement
-    if (value !== null) {
-      variableCache[key] = value;
-      return;
-    }
-  
-    // Sinon, récupérer la valeur depuis la base de données
-    const variable = await Variable.findOne({ where: { key } });
-    if (variable) {
-      variableCache[key] = variable.value;
-    }
-  };
-  
+  // Si la valeur est passée, l'utiliser directement
+  if (value !== null) {
+    variableCache[key] = value;
+    return;
+  }
+
+  // Sinon, récupérer la valeur depuis la base de données
+  const variable = await Variable.findOne({ where: { key } });
+  if (variable) {
+    variableCache[key] = variable.value;
+  }
+};
 
 // Accéder à une variable du cache
 const getVariableFromCache = (key) => {

@@ -29,9 +29,7 @@ const voteComment = async (req, res) => {
       });
     }
 
-    res
-      .status(200)
-      .json({ success: true, message: "Votre vote a été enregistré." });
+    res.status(200).json({ success: true, message: "Votre vote a été enregistré." });
   } catch (error) {
     console.error("Erreur pendant le vote:", error);
     res.status(500).json({ error: error.message });

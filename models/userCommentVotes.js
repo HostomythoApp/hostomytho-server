@@ -2,7 +2,7 @@ const { Model } = require("sequelize");
 
 module.exports = (sequelize, DataTypes) => {
   class UserCommentVotes extends Model {}
-  
+
   UserCommentVotes.init(
     {
       id: {
