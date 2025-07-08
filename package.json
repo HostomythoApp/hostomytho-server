@@ -6,6 +6,7 @@
   "scripts": {
     "start": "nodemon ./bin/www",
     "test": "jest",
+    "test:coverage": "jest --coverage",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "format": "prettier --check --debug-check .",

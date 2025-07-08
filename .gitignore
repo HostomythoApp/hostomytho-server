@@ -26,3 +26,6 @@ venv_name/
 
 backups/
 dumps/
+
+# Tests
+coverage/
