@@ -38,7 +38,9 @@ const getText = async (req, res) => {
       });
 
       if (!group || !group.text) {
-        return res.status(404).json({ error: "No suitable group text found" });
+        return res
+          .status(404)
+          .json({ code: "no-group-texts", error: "No suitable group text found" });
       }
 
       let sentences = await extractSentencesForGroup(group);
@@ -66,7 +68,7 @@ const getText = async (req, res) => {
       });
 
       if (!text) {
-        return res.status(404).json({ error: "No more texts to process" });
+        return res.status(404).json({ code: "no-texts", error: "No more texts to process" });
       }
 
       // Récupérer les phrases du texte sélectionné, triées par leur position
@@ -84,7 +86,9 @@ const getText = async (req, res) => {
       });
 
       if (sentences.length === 0) {
-        return res.status(404).json({ error: "Text " + text.id + " has no sentences" });
+        return res
+          .status(404)
+          .json({ code: "no-sentences", error: "Text " + text.id + " has no sentences" });
       }
 
       // Calculer le nombre total de tokens pour chaque phrase
@@ -444,7 +448,7 @@ const getTextTestPlausibility = async (req, res) => {
       ],
     });
     if (!text) {
-      return res.status(404).json({ error: "No more texts to process" });
+      return res.status(404).json({ code: "no-test-texts", error: "No more texts to process" });
     }
     text.tokens.sort((a, b) => a.position - b.position);
     text.dataValues.sentence_positions = "1, 2, 3, 4";
