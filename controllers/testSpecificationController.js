@@ -5,9 +5,7 @@ const createTestSpecifications = async (req, res) => {
     const testSpecifications = req.body;
 
     // Utilisation de bulkCreate pour insérer plusieurs enregistrements en une fois
-    const newTestSpecifications = await TestSpecification.bulkCreate(
-      testSpecifications
-    );
+    const newTestSpecifications = await TestSpecification.bulkCreate(testSpecifications);
 
     res.status(201).json(newTestSpecifications);
   } catch (error) {

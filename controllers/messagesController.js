@@ -1,7 +1,4 @@
 const { MessageContact, MessageMenu, User } = require("../models/index.js");
-const { sequelize } = require("../service/db.js");
-const fs = require("fs");
-const path = require("path");
 
 const getMessages = async (req, res, next) => {
   try {
@@ -30,13 +27,8 @@ const getMessagesMenu = async (req, res, next) => {
 
     let messageMenu;
     if (messageType) {
-      if (
-        messageType !== "home_not_connected" &&
-        messageType !== "home_connected"
-      ) {
-        return res
-          .status(400)
-          .json({ error: "Invalid or missing messageType parameter." });
+      if (messageType !== "home_not_connected" && messageType !== "home_connected") {
+        return res.status(400).json({ error: "Invalid or missing messageType parameter." });
       }
       messageMenu = await MessageMenu.findAll({
         where: {
@@ -82,8 +74,7 @@ const updateMessageMenu = async (req, res, next) => {
     if (message !== undefined) {
       messageMenu.message = message;
     }
-    messageMenu.active =
-      typeof active !== "undefined" ? active : messageMenu.active;
+    messageMenu.active = typeof active !== "undefined" ? active : messageMenu.active;
 
     await messageMenu.save();
 
@@ -92,7 +83,6 @@ const updateMessageMenu = async (req, res, next) => {
     next(err);
   }
 };
-
 
 const notifyAllUsers = async (req, res, next) => {
   try {

@@ -29,7 +29,6 @@ const createErrorTest = async (req, res) => {
   }
 };
 
-
 const getErrorTestByTextId = async (req, res) => {
   try {
     const textId = parseInt(req.params.textId);
@@ -85,9 +84,7 @@ const updateErrorTestById = async (req, res) => {
       const updatedErrorTest = await UserErrorDetail.findByPk(errorId);
       res.status(200).json(updatedErrorTest);
     } else {
-      res
-        .status(404)
-        .json({ error: "ErrorTest introuvable ou non modifiable" });
+      res.status(404).json({ error: "ErrorTest introuvable ou non modifiable" });
     }
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -117,5 +114,5 @@ module.exports = {
   createErrorTest,
   updateErrorTestById,
   deleteErrorTestById,
-  getErrorTestById
+  getErrorTestById,
 };

@@ -33,9 +33,7 @@ const getSmallTextWithTokens = async (req, res) => {
     });
 
     // créer un tableau d'IDs de ces textes
-    const playedTextIds = userGameTexts.map(
-      (userGameText) => userGameText.text_id
-    );
+    const playedTextIds = userGameTexts.map((userGameText) => userGameText.text_id);
 
     // trouver un texte qui n'a pas encore été joué par cet utilisateur pour ce type de jeu
     let text = await Text.findOne({
@@ -70,15 +68,11 @@ const getSmallTextWithTokens = async (req, res) => {
     });
 
     if (sentences.length === 0) {
-      return res
-        .status(404)
-        .json({ error: "Text " + text.id + " has no sentences" });
+      return res.status(404).json({ error: "Text " + text.id + " has no sentences" });
     }
 
     // Calculer le nombre total de tokens pour chaque phrase
-    let totalTokensBySentence = sentences.map(
-      (sentence) => sentence.tokens.length
-    );
+    let totalTokensBySentence = sentences.map((sentence) => sentence.tokens.length);
     // Calculer le total cumulatif de tokens pour identifier les points de départ possibles
     let cumulativeTokens = totalTokensBySentence.reduce((acc, curr, i) => {
       acc.push((acc[i - 1] || 0) + curr);
@@ -93,32 +87,22 @@ const getSmallTextWithTokens = async (req, res) => {
       totalTokens = cumulativeTokens[cumulativeTokens.length - 1]; // Total de tokens du texte
     } else {
       // Déterminer le maxStartIndex correctement sans utiliser startIndex dans le calcul
-      let validStartIndexes = cumulativeTokens.findIndex(
-        (cumulative) => cumulative >= nbToken
-      );
+      let validStartIndexes = cumulativeTokens.findIndex((cumulative) => cumulative >= nbToken);
       if (validStartIndexes === -1) {
         // Si aucun index valide n'est trouvé
-        return res
-          .status(404)
-          .json({ error: "Cannot find a suitable start position" });
+        return res.status(404).json({ error: "Cannot find a suitable start position" });
       }
 
       // Le maxStartIndex est maintenant l'index du dernier élément qui peut servir de point de départ valide
       let maxStartIndex =
-        validStartIndexes < sentences.length
-          ? validStartIndexes
-          : sentences.length - 1;
+        validStartIndexes < sentences.length ? validStartIndexes : sentences.length - 1;
 
       let startIndex = Math.floor(Math.random() * (maxStartIndex + 1));
       let startFromEnd = Math.random() < 0.5; // 50% chance de commencer par la fin
 
       if (startFromEnd) {
         // Sélectionner depuis la fin
-        for (
-          let i = sentences.length - 1;
-          i >= 0 && totalTokens < nbToken;
-          i--
-        ) {
+        for (let i = sentences.length - 1; i >= 0 && totalTokens < nbToken; i--) {
           selectedSentences.unshift(sentences[i]); // Ajouter au début pour conserver l'ordre
           totalTokens += sentences[i].tokens.length;
           if (totalTokens >= nbToken) break;
@@ -171,9 +155,7 @@ const getAllTexts = async (req, res) => {
     const texts = await Text.findAll();
     const truncatedTexts = texts.map((text) => {
       const content =
-        text.content.length > 180
-          ? text.content.substring(0, 180) + "..."
-          : text.content;
+        text.content.length > 180 ? text.content.substring(0, 180) + "..." : text.content;
 
       return {
         ...text.toJSON(),
@@ -196,9 +178,7 @@ const getTextById = async (req, res) => {
     if (!text) {
       return res.status(404).json({ error: "Text not found" });
     }
-    text.dataValues.created_at = moment(text.created_at)
-      .locale("fr")
-      .format("DD MMMM YYYY");
+    text.dataValues.created_at = moment(text.created_at).locale("fr").format("DD MMMM YYYY");
 
     res.status(200).json(text);
   } catch (error) {
@@ -335,15 +315,10 @@ const createText = async (req, res) => {
             length: tokensInfoArray.length,
             origin: req.body.origin,
             is_plausibility_test: req.body.is_plausibility_test || false,
-            test_plausibility: req.body.is_plausibility_test
-              ? req.body.test_plausibility
-              : 0,
-            is_hypothesis_specification_test:
-              req.body.is_hypothesis_specification_test || false,
-            is_condition_specification_test:
-              req.body.is_condition_specification_test || false,
-            is_negation_specification_test:
-              req.body.is_negation_specification_test || false,
+            test_plausibility: req.body.is_plausibility_test ? req.body.test_plausibility : 0,
+            is_hypothesis_specification_test: req.body.is_hypothesis_specification_test || false,
+            is_condition_specification_test: req.body.is_condition_specification_test || false,
+            is_negation_specification_test: req.body.is_negation_specification_test || false,
             reason_for_rate: req.body.reason_for_rate,
           };
 
@@ -372,7 +347,7 @@ const createText = async (req, res) => {
               });
             }
           }
-   
+
           res.status(201).json(text);
         } catch (innerError) {
           console.error(`Database or data error when creating a text: ${innerError}`);

@@ -84,95 +84,84 @@ router.get("/equipped/:userId", async function (req, res, next) {
   }
 });
 
-router.put(
-  "/equip/:skinId",
-  userAuthMiddleware,
-  async function (req, res, next) {
-    try {
-      const userId = req.user.id;
-      const skinId = req.params.skinId;
+router.put("/equip/:skinId", userAuthMiddleware, async function (req, res, next) {
+  try {
+    const userId = req.user.id;
+    const skinId = req.params.skinId;
 
-      // Déséquiper tous les skins du même type
-      const skinToEquip = await Skin.findOne({ where: { id: skinId } });
-      const userSkins = await UserSkin.findAll({
-        where: { user_id: userId },
-        include: [
-          {
-            model: Skin,
-            where: { type: skinToEquip.type },
-          },
-        ],
-      });
+    // Déséquiper tous les skins du même type
+    const skinToEquip = await Skin.findOne({ where: { id: skinId } });
+    const userSkins = await UserSkin.findAll({
+      where: { user_id: userId },
+      include: [
+        {
+          model: Skin,
+          where: { type: skinToEquip.type },
+        },
+      ],
+    });
 
-      for (let userSkin of userSkins) {
-        userSkin.equipped = false;
-        await userSkin.save();
-      }
-
-      // Trouver et équiper le skin spécifié
-      const userSkinToEquip = await UserSkin.findOne({
-        where: { user_id: userId, skin_id: skinId },
-      });
-
-      if (!userSkinToEquip) {
-        res.status(404).json({ error: "User or skin not found" });
-        return;
-      }
-
-      userSkinToEquip.equipped = true;
-      await userSkinToEquip.save();
-
-      res.status(200).json(userSkinToEquip);
-    } catch (error) {
-      res.status(500).json({ error: error.message });
+    for (let userSkin of userSkins) {
+      userSkin.equipped = false;
+      await userSkin.save();
     }
-  }
-);
 
-router.put(
-  "/unequip/:skinId",
-  userAuthMiddleware,
-  async function (req, res, next) {
-    try {
-      const userId = req.user.id;
-      const skinId = req.params.skinId;
+    // Trouver et équiper le skin spécifié
+    const userSkinToEquip = await UserSkin.findOne({
+      where: { user_id: userId, skin_id: skinId },
+    });
 
-      // Trouver et déséquiper le skin spécifié
-      const userSkinToUnequip = await UserSkin.findOne({
-        where: { user_id: userId, skin_id: skinId },
-      });
-
-      if (!userSkinToUnequip) {
-        res.status(404).json({ error: "User or skin not found" });
-        return;
-      }
-
-      userSkinToUnequip.equipped = false;
-      await userSkinToUnequip.save();
-
-      res.status(200).json(userSkinToUnequip);
-    } catch (error) {
-      res.status(500).json({ error: error.message });
+    if (!userSkinToEquip) {
+      res.status(404).json({ error: "User or skin not found" });
+      return;
     }
+
+    userSkinToEquip.equipped = true;
+    await userSkinToEquip.save();
+
+    res.status(200).json(userSkinToEquip);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
   }
-);
+});
 
-router.get(
-  "/getImageCharacterByUserId/:userId",
-  async function (req, res, next) {
-    try {
-      const user = await User.findByPk(req.params.id, {
-        attributes: { exclude: ["password"] },
-      });
-      if (!user) {
-        return res.status(404).json({ error: "User not found" });
-      }
+router.put("/unequip/:skinId", userAuthMiddleware, async function (req, res, next) {
+  try {
+    const userId = req.user.id;
+    const skinId = req.params.skinId;
 
-      res.status(200).json(user);
-    } catch (error) {
-      res.status(500).json({ error: error.message });
+    // Trouver et déséquiper le skin spécifié
+    const userSkinToUnequip = await UserSkin.findOne({
+      where: { user_id: userId, skin_id: skinId },
+    });
+
+    if (!userSkinToUnequip) {
+      res.status(404).json({ error: "User or skin not found" });
+      return;
     }
+
+    userSkinToUnequip.equipped = false;
+    await userSkinToUnequip.save();
+
+    res.status(200).json(userSkinToUnequip);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
   }
-);
+});
+
+router.get("/getImageCharacterByUserId/:userId", async function (req, res, next) {
+  try {
+    const user = await User.findByPk(req.params.id, {
+      attributes: { exclude: ["password"] },
+    });
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    res.status(200).json(user);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
 
 module.exports = router;

@@ -2,10 +2,7 @@ var express = require("express");
 var router = express.Router();
 const { Criminal, UserCriminal } = require("../models");
 const { User, Achievement } = require("../models");
-const {
-  updateUserCoeffMulti,
-  updateUserStats,
-} = require("../controllers/userController");
+const { updateUserCoeffMulti, updateUserStats } = require("../controllers/userController");
 const { userAuthMiddleware } = require("../middleware/authMiddleware");
 
 router.get("/caughtByUserId", userAuthMiddleware, async function (req, res) {
@@ -42,10 +39,7 @@ async function checkCriminalAchievements(user, caughtCriminalsCount) {
       const existingAchievement = await user.getAchievements({
         where: { id: achievement.id },
       });
-      if (
-        existingAchievement.length === 0 &&
-        caughtCriminalsCount >= achievement.count
-      ) {
+      if (existingAchievement.length === 0 && caughtCriminalsCount >= achievement.count) {
         const newAchievement = await Achievement.findByPk(achievement.id);
         if (newAchievement) {
           await user.addAchievement(newAchievement, {
@@ -133,9 +127,7 @@ router.post("/catchCriminal", userAuthMiddleware, async function (req, res) {
         where: { user_id: userId, criminal_id: nextCriminalId },
       });
       if (alreadyCaught) {
-        return res
-          .status(409)
-          .json({ error: "Criminal already caught by this user" });
+        return res.status(409).json({ error: "Criminal already caught by this user" });
       }
 
       const catchEntry = await UserCriminal.create({
@@ -145,16 +137,11 @@ router.post("/catchCriminal", userAuthMiddleware, async function (req, res) {
 
       const criminalDetails = await Criminal.findByPk(nextCriminalId);
       if (!criminalDetails) {
-        return res
-          .status(404)
-          .json({ error: "Criminal details not found after catch" });
+        return res.status(404).json({ error: "Criminal details not found after catch" });
       }
 
       // Vérification des hauts faits après l'arrestation
-      const newAchievements = await checkCriminalAchievements(
-        user,
-        caughtCriminalsCount + 1
-      );
+      const newAchievements = await checkCriminalAchievements(user, caughtCriminalsCount + 1);
 
       // Définir allCriminalsCaught à true uniquement si on a attrapé le dernier criminel
       const allCriminalsCaught = caughtCriminalsCount + 1 > totalCriminalsCount;

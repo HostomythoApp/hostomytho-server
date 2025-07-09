@@ -24,9 +24,7 @@ const getRandomSkin = async (userId, transaction) => {
     for (let skin of allSkins) {
       if (
         !ownedSkinIds.includes(skin.id) &&
-        (skin.gender === userGender ||
-          skin.gender === "unisexe" ||
-          !skin.gender)
+        (skin.gender === userGender || skin.gender === "unisexe" || !skin.gender)
       ) {
         skinPool = skinPool.concat(Array(11 - skin.rarity).fill(skin));
       }

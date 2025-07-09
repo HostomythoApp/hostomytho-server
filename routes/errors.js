@@ -1,16 +1,7 @@
 var express = require("express");
 var router = express.Router();
-const {
-  ErrorType,
-  UserErrorDetail,
-  UserTypingErrors,
-  Token,
-  Text,
-} = require("../models");
-const {
-  updateUserStats,
-  getUserById,
-} = require("../controllers/userController");
+const { ErrorType, UserErrorDetail, UserTypingErrors, Token, Text } = require("../models");
+const { updateUserStats, getUserById } = require("../controllers/userController");
 const { sequelize } = require("../service/db.js");
 const { userAuthMiddleware } = require("../middleware/authMiddleware");
 const { Op } = require("sequelize");
@@ -18,8 +9,7 @@ const { getVariableFromCache } = require("../service/cache");
 
 router.get("/getTextMythoTypo", async function (req, res, next) {
   try {
-    const percentage_test_mythotypo =
-      getVariableFromCache("percentage_test_mythotypo") || 30;
+    const percentage_test_mythotypo = getVariableFromCache("percentage_test_mythotypo") || 30;
     const randomNumber = Math.floor(Math.random() * 100);
     if (randomNumber < percentage_test_mythotypo) {
       const userErrorDetail = await UserErrorDetail.findOne({
@@ -39,9 +29,7 @@ router.get("/getTextMythoTypo", async function (req, res, next) {
       });
 
       if (!userErrorDetail) {
-        return res
-          .status(404)
-          .json({ error: "No text with test errors found" });
+        return res.status(404).json({ error: "No text with test errors found" });
       }
 
       userErrorDetail.text.tokens.sort((a, b) => a.position - b.position);
@@ -74,9 +62,7 @@ router.get("/getTextMythoTypo", async function (req, res, next) {
       });
 
       if (!userErrorDetail) {
-        return res
-          .status(404)
-          .json({ error: "No text with unplayed errors found" });
+        return res.status(404).json({ error: "No text with unplayed errors found" });
       }
 
       userErrorDetail.text.tokens.sort((a, b) => a.position - b.position);
@@ -103,24 +89,18 @@ router.post("/sendResponse", userAuthMiddleware, async (req, res) => {
   const userId = req.user.id;
 
   try {
-    const base_points_earned_mythotypo =
-      getVariableFromCache("base_points_earned_mythotypo") || 3;
-    const base_catchability_mythotypo =
-      getVariableFromCache("base_catchability_mythotypo") || 3;
+    const base_points_earned_mythotypo = getVariableFromCache("base_points_earned_mythotypo") || 3;
+    const base_catchability_mythotypo = getVariableFromCache("base_catchability_mythotypo") || 3;
 
     const userErrorDetail = await UserErrorDetail.findOne({
       where: { id: userErrorDetailId },
-      include: [
-        { model: ErrorType, attributes: ["id", "name"], as: "error_type" },
-      ],
+      include: [{ model: ErrorType, attributes: ["id", "name"], as: "error_type" }],
       transaction,
     });
 
     if (!userErrorDetail) {
       await transaction.rollback();
-      return res
-        .status(404)
-        .json({ success: false, message: "Error detail not found" });
+      return res.status(404).json({ success: false, message: "Error detail not found" });
     }
 
     let isUserCorrect = false;
@@ -142,10 +122,7 @@ router.post("/sendResponse", userAuthMiddleware, async (req, res) => {
         pointsToAdd = 0;
         percentageToAdd = 0;
         trustIndexIncrement = -1;
-        if (
-          userErrorDetail.reason_for_type &&
-          userErrorDetail.reason_for_type.trim() !== ""
-        ) {
+        if (userErrorDetail.reason_for_type && userErrorDetail.reason_for_type.trim() !== "") {
           message = userErrorDetail.reason_for_type;
         } else {
           message = getCorrectionMessage(userErrorDetail.test_error_type_id);
@@ -158,12 +135,7 @@ router.post("/sendResponse", userAuthMiddleware, async (req, res) => {
       trustIndexIncrement = 0;
       success = true;
 
-      await createUserTypingError(
-        userId,
-        userErrorDetailId,
-        selectedErrorType,
-        transaction
-      );
+      await createUserTypingError(userId, userErrorDetailId, selectedErrorType, transaction);
     }
 
     const updatedStats = await updateUserStats(
@@ -197,18 +169,13 @@ router.post("/sendResponse", userAuthMiddleware, async (req, res) => {
 });
 
 // Par contre c'est bizarre, quand je crée le UserTypingErrors, le weight reste
-const createUserTypingError = async (
-  userId,
-  userErrorDetailId,
-  errorTypeId
-) => {
+const createUserTypingError = async (userId, userErrorDetailId, errorTypeId) => {
   const transaction = await sequelize.transaction();
   try {
     const user = await getUserById(userId);
 
     const baseWeight = user.trust_index;
-    const typingWeight =
-      user.status === "medecin" ? baseWeight + baseWeight * 0.3 : baseWeight;
+    const typingWeight = user.status === "medecin" ? baseWeight + baseWeight * 0.3 : baseWeight;
 
     await UserTypingErrors.create(
       {
@@ -236,10 +203,7 @@ const createUserTypingError = async (
         newVoteWeight = userErrorDetail.vote_weight + 3;
       }
 
-      await userErrorDetail.update(
-        { vote_weight: newVoteWeight },
-        { transaction }
-      );
+      await userErrorDetail.update({ vote_weight: newVoteWeight }, { transaction });
       console.error("UserErrorDetail vote_weight updated");
     } else {
       console.error("UserErrorDetail not found");

@@ -9,13 +9,13 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.INTEGER,
         allowNull: true,
         references: {
-          model: "users", 
+          model: "users",
           key: "id",
         },
       },
       username: {
         type: DataTypes.STRING(50),
-        allowNull: true, 
+        allowNull: true,
       },
       points: {
         type: DataTypes.INTEGER,

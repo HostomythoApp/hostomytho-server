@@ -13,9 +13,9 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.INTEGER,
         allowNull: false,
         references: {
-          model: 'texts',
-          key: 'id',
-        }
+          model: "texts",
+          key: "id",
+        },
       },
       content: {
         type: DataTypes.TEXT,

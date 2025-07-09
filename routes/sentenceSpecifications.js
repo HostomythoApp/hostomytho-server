@@ -1,6 +1,5 @@
 var express = require("express");
 var router = express.Router();
-const { sequelize } = require("../service/db.js");
 const sentenceSpecificationsController = require("../controllers/sentenceSpecificationsController");
 const { userAuthMiddleware } = require("../middleware/authMiddleware");
 

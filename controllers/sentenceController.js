@@ -1,5 +1,5 @@
 const { Sentence } = require("../models");
-const { Op, Sequelize } = require("sequelize");
+const { Sequelize } = require("sequelize");
 
 const getAllSentences = async (req, res) => {
   try {
@@ -27,7 +27,7 @@ const getRandomSentences = async (req, res) => {
   try {
     const sentences = await Sentence.findAll({
       order: Sequelize.literal("rand()"),
-      limit: amount
+      limit: amount,
     });
     res.status(200).json(sentences);
   } catch (error) {
@@ -38,5 +38,5 @@ const getRandomSentences = async (req, res) => {
 module.exports = {
   getAllSentences,
   getSentenceById,
-  getRandomSentences
+  getRandomSentences,
 };

@@ -28,10 +28,7 @@ const performBackup = () => {
   const dateString = `${date.getFullYear()}-${
     date.getMonth() + 1
   }-${date.getDate()}-${date.getHours()}${date.getMinutes()}${date.getSeconds()}`;
-  const backupFile = path.join(
-    backupDir,
-    `${process.env.DB_NAME}-${dateString}.sql`
-  );
+  const backupFile = path.join(backupDir, `${process.env.DB_NAME}-${dateString}.sql`);
 
   const backupCommand = `mysqldump -h ${process.env.DB_HOST} -u ${process.env.DB_USER} --password=${process.env.DB_PASSWORD} ${process.env.DB_NAME} > ${backupFile}`;
 
@@ -45,9 +42,7 @@ const performBackup = () => {
       // Fermer la connexion après la fin du nettoyage
       connection.end((err) => {
         if (err) {
-          logToFile(
-            `Erreur lors de la fermeture de la connexion MySQL: ${err}`
-          );
+          logToFile(`Erreur lors de la fermeture de la connexion MySQL: ${err}`);
         }
       });
     });
@@ -74,9 +69,7 @@ const cleanOldBackups = (callback) => {
           if (now > endTime) {
             fs.unlink(filePath, (err) => {
               if (err) {
-                logToFile(
-                  `Erreur lors de la suppression du fichier backup: ${err}`
-                );
+                logToFile(`Erreur lors de la suppression du fichier backup: ${err}`);
                 return resolve();
               }
               logToFile(`Fichier backup supprimé : ${filePath}`);

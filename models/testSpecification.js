@@ -21,7 +21,7 @@ module.exports = (sequelize, DataTypes) => {
       },
       type: {
         type: DataTypes.ENUM,
-        values: ['hypothesis', 'condition', 'negation'],
+        values: ["hypothesis", "condition", "negation"],
         allowNull: false,
       },
       content: {
@@ -31,7 +31,7 @@ module.exports = (sequelize, DataTypes) => {
       word_positions: {
         type: DataTypes.STRING,
         allowNull: false,
-      }
+      },
     },
     {
       sequelize,
