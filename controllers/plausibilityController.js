@@ -43,7 +43,13 @@ const getText = async (req, res) => {
           .json({ code: "no-group-texts", error: "No suitable group text found" });
       }
 
-      let sentences = await extractSentencesForGroup(group);
+      let sentences;
+      if (group.sentence_positions === "full") {
+        sentences = await getSentences(group.text.id);
+      } else {
+        const positions = group.sentence_positions.split(",").map((pos) => parseInt(pos));
+        sentences = await getSentences(group.text.id, positions);
+      }
 
       let tokens = sentences.flatMap((sentence) =>
         sentence.tokens.map((token) => ({
@@ -72,18 +78,7 @@ const getText = async (req, res) => {
       }
 
       // Récupérer les phrases du texte sélectionné, triées par leur position
-      let sentences = await Sentence.findAll({
-        where: { text_id: text.id },
-        attributes: ["id", "position"],
-        order: [["position", "ASC"]],
-        include: [
-          {
-            model: Token,
-            attributes: ["id", "content", "position", "is_punctuation"],
-            required: true,
-          },
-        ],
-      });
+      let sentences = await getSentences(text.id);
 
       if (sentences.length === 0) {
         return res
@@ -557,19 +552,10 @@ module.exports = {
   getText,
 };
 
-async function extractSentencesForGroup(group) {
-  let where;
-  if (group.sentence_positions === "full") {
-    where = { text_id: group.text.id };
-  } else {
-    const positions = group.sentence_positions.split(",").map((pos) => parseInt(pos));
-    where = {
-      text_id: group.text.id,
-      position: positions,
-    };
-  }
+async function getSentences(text_id, positions) {
   return await Sentence.findAll({
-    where: where,
+    where: { text_id: text_id, ...(positions && { position: positions }) },
+    attributes: ["id", "position"],
     order: [["position", "ASC"]],
     include: [
       {
