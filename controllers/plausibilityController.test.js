@@ -43,10 +43,8 @@ describe("getText", () => {
 
     const expected = {
       id: 1,
-      is_plausibility_test: true,
-      is_active: true,
-      dataValues: {},
-      tokens: [],
+      dataValues: {}, // required to avoid undefined
+      tokens: [], // required to avoid undefined
     };
     Text.findOne.mockReturnValue(expected);
 
