@@ -153,6 +153,7 @@ const getText = async (req, res) => {
       res.status(200).json(result);
     }
   } catch (error) {
+    console.error(error.message);
     res.status(500).json({ error: error.message });
   }
 };
@@ -445,10 +446,12 @@ const getTextTestPlausibility = async (req, res) => {
     if (!text) {
       return res.status(404).json({ code: "no-test-texts", error: "No more texts to process" });
     }
+    console.debug(text); // check what the returned data format looks like
     text.tokens.sort((a, b) => a.position - b.position);
-    text.dataValues.sentence_positions = "1, 2, 3, 4";
+    text.dataValues.sentence_positions = "1, 2, 3, 4"; // TODO: why is it set to such value here?
     res.status(200).json(text);
   } catch (error) {
+    console.error(error.message);
     res.status(500).json({ error: error.message });
   }
 };
