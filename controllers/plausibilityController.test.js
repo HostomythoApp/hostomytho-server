@@ -1,6 +1,6 @@
 const { getText } = require("./plausibilityController");
 const { mockRandom, resetMockRandom } = require("jest-mock-random");
-const { Text } = require("../models");
+const { Text, GroupTextRating } = require("../models");
 
 jest.mock("../models");
 
@@ -35,6 +35,21 @@ describe("getText", () => {
       expect(res.json).toHaveBeenCalledWith(expect.objectContaining({ code: expectedErrorCode }));
     }
   );
+
+  it("should return 404 if group text has no associated text", async () => {
+    mockRandom(0.3); // force going to the proper branch
+    req = mockRequest();
+    res = mockResponse();
+
+    GroupTextRating.findOne.mockReturnValue({
+      id: 1,
+      text: undefined,
+    });
+    await getText(req, res);
+
+    expect(res.status).toHaveBeenCalledWith(404);
+    expect(res.json).toHaveBeenCalledWith(expect.objectContaining({ code: "no-group-texts" }));
+  });
 
   it("should return 200 with text data if test text is available", async () => {
     mockRandom(0.0);
