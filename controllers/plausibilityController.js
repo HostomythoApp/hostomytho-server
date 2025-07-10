@@ -28,8 +28,12 @@ const getText = async (req, res) => {
       return await getTextTestPlausibility(req, res);
     } else if (randomNumber >= percentage_test_mythooupas && randomNumber < sumTextAlreadyTreated) {
       // Choix d'un texte déjà joué tiré de GroupTextRating
-      // TODO: Prevent getting a group text rating the player already partook in
       group = await GroupTextRating.findOne({
+        // Prevents getting a GroupTextRating the player already partook in
+        // Sequelize does not natively support NOT EXISTS, hence why we have to use a raw literal here
+        where: sequelize.literal(
+          "NOT EXISTS (SELECT * FROM user_text_rating WHERE group_text_rating.id = user_text_rating.group_id)"
+        ),
         order: Sequelize.literal("RAND()"),
         include: {
           model: Text,
