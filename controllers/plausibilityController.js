@@ -79,14 +79,32 @@ const getText = async (req, res) => {
 
       return res.status(200).json(result);
     } else {
+      // TODO: Rework the whole query/function logic to use random, but be assured to send back a text that the player never saw before
+      // Right now we still could use RAND(), but query up to 20 texts, but there could be unlucky times where all 20 texts should be discarded...
       text = await Text.findOne({
         where: { is_plausibility_test: false, is_active: true },
         attributes: ["id"],
         order: Sequelize.literal("RAND()"),
+        include: [
+          {
+            model: UserTextRating,
+            required: false,
+            where: {
+              user_id: user.id,
+            },
+          },
+        ],
       });
 
       if (!text) {
         return res.status(404).json({ code: "no-texts", error: "No more texts to process" });
+      }
+
+      if (text.user_text_ratings.some((rating) => rating.sentence_positions === "full")) {
+        return res.status(404).json({
+          code: "already-did-this-text-full",
+          error: "The player already evaluated the entirety of this text.",
+        });
       }
 
       // Récupérer les phrases du texte sélectionné, triées par leur position
@@ -143,6 +161,16 @@ const getText = async (req, res) => {
         }
       }
 
+      const selectedSentencesStr = selectedSentences
+        .map((sentence) => sentence.position)
+        .join(", ");
+      if (text.user_text_ratings.some((utr) => utr.sentence_positions === selectedSentencesStr)) {
+        return res.status(404).json({
+          code: "already-did-this-text-portion",
+          error: "The player already evaluated these sentences from this text.",
+        });
+      }
+
       let groupedTokens = selectedSentences.flatMap((sentence) =>
         sentence.tokens.map((token) => ({
           id: token.id,
@@ -156,9 +184,7 @@ const getText = async (req, res) => {
       let result = {
         id: text.id,
         sentence_positions:
-          selectedSentences.length === sentences.length
-            ? "full"
-            : selectedSentences.map((sentence) => sentence.position).join(", "),
+          selectedSentences.length === sentences.length ? "full" : selectedSentencesStr,
         tokens: groupedTokens,
       };
 
