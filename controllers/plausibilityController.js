@@ -216,15 +216,8 @@ const getErrorDetailTest = async (req, res) => {
 };
 
 const sendResponse = async (req, res) => {
-  const {
-    textId,
-    userErrorDetails,
-    userRateSelected,
-    sentencePositions,
-    userComment,
-    responseNum,
-    userId,
-  } = req.body;
+  const { textId, userErrorDetails, userRateSelected, sentencePositions, responseNum, userId } =
+    req.body;
   let transaction;
   let pointsToAdd = 0;
   let percentageToAdd = 0;
