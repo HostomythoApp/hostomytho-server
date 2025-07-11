@@ -14,7 +14,14 @@ const { updateUserStats, getUserById } = require("../controllers/userController"
 const { getVariableFromCache } = require("../service/cache");
 
 const getText = async (req, res) => {
-  try {
+  const { userId } = req.body ?? {};
+  const user = await getUserById(userId); // using this makes sure we know the player (and avoids SQL injection)
+  if (!user) {
+    return res
+      .status(400)
+      .json({ code: "no-user-with-id", error: "Could not find player with this ID." });
+  }
+
     const randomNumber = Math.floor(Math.random() * 100);
     const text_length_in_game = getVariableFromCache("text_length_in_game") || 110;
     const percentage_test_mythooupas = getVariableFromCache("percentage_test_mythooupas") || 25;
@@ -24,6 +31,7 @@ const getText = async (req, res) => {
     const sumTextAlreadyTreated = percentage_test_mythooupas + text_already_treated_mythooupas;
     let text, group;
 
+  try {
     if (randomNumber < percentage_test_mythooupas) {
       return await getTextTestPlausibility(req, res);
     } else if (randomNumber >= percentage_test_mythooupas && randomNumber < sumTextAlreadyTreated) {
@@ -32,7 +40,7 @@ const getText = async (req, res) => {
         // Prevents getting a GroupTextRating the player already partook in
         // Sequelize does not natively support NOT EXISTS, hence why we have to use a raw literal here
         where: sequelize.literal(
-          "NOT EXISTS (SELECT * FROM user_text_rating WHERE group_text_rating.id = user_text_rating.group_id)"
+          `NOT EXISTS (SELECT * FROM user_text_rating WHERE group_text_rating.id = user_text_rating.group_id AND user_text_rating.user_id = ${user.id})`
         ),
         order: Sequelize.literal("RAND()"),
         include: {
