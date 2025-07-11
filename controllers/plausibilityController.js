@@ -22,14 +22,14 @@ const getText = async (req, res) => {
       .json({ code: "no-user-with-id", error: "Could not find player with this ID." });
   }
 
-    const randomNumber = Math.floor(Math.random() * 100);
-    const text_length_in_game = getVariableFromCache("text_length_in_game") || 110;
-    const percentage_test_mythooupas = getVariableFromCache("percentage_test_mythooupas") || 25;
-    const text_already_treated_mythooupas =
-      getVariableFromCache("text_already_treated_mythooupas") || 20;
+  const randomNumber = Math.floor(Math.random() * 100);
+  const text_length_in_game = getVariableFromCache("text_length_in_game") || 110;
+  const percentage_test_mythooupas = getVariableFromCache("percentage_test_mythooupas") || 25;
+  const text_already_treated_mythooupas =
+    getVariableFromCache("text_already_treated_mythooupas") || 20;
 
-    const sumTextAlreadyTreated = percentage_test_mythooupas + text_already_treated_mythooupas;
-    let text, group;
+  const sumTextAlreadyTreated = percentage_test_mythooupas + text_already_treated_mythooupas;
+  let text, group;
 
   try {
     if (randomNumber < percentage_test_mythooupas) {
