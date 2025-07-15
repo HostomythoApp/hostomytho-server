@@ -14,8 +14,7 @@ const { updateUserStats, getUserById } = require("../controllers/userController"
 const { getVariableFromCache } = require("../service/cache");
 
 const getText = async (req, res) => {
-  const { userId } = req.body ?? {};
-  const user = await getUserById(userId); // using this makes sure we know the player (and avoids SQL injection)
+  const user = await getUserById(req.query.user); // using this makes sure we know the player (and avoids SQL injection)
   if (!user) {
     return res
       .status(400)
