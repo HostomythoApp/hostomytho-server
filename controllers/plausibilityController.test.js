@@ -30,8 +30,8 @@ describe("getText", () => {
     "should return 404 if there is no $textType texts available",
     async ({ randomValue, expectedErrorCode }) => {
       mockRandom(randomValue); // force going into the proper probability branch, but not great that the test "knows" how it works inside...
-      req = mockRequest({ userId: 1 });
-      res = mockResponse();
+      const req = mockRequest({ userId: 1 });
+      const res = mockResponse();
       getUserById.mockReturnValue({ id: 1 });
       await getText(req, res);
 
@@ -42,8 +42,8 @@ describe("getText", () => {
 
   it("should return 404 if group text has no associated text", async () => {
     mockRandom(0.3); // force going to the proper branch
-    req = mockRequest({ userId: 1 });
-    res = mockResponse();
+    const req = mockRequest({ userId: 1 });
+    const res = mockResponse();
     getUserById.mockReturnValue({ id: 1 });
 
     GroupTextRating.findOne.mockReturnValue({
@@ -58,8 +58,8 @@ describe("getText", () => {
 
   it("should return 200 with text data if test text is available", async () => {
     mockRandom(0.0);
-    req = mockRequest({ userId: 1 });
-    res = mockResponse();
+    const req = mockRequest({ userId: 1 });
+    const res = mockResponse();
     getUserById.mockReturnValue({ id: 1 });
 
     const expected = {
@@ -76,8 +76,8 @@ describe("getText", () => {
   });
 
   it("should return 400 if no userId was provided in req body", async () => {
-    req = mockRequest();
-    res = mockResponse();
+    const req = mockRequest();
+    const res = mockResponse();
     getUserById.mockReturnValue(undefined);
     await getText(req, res);
 
