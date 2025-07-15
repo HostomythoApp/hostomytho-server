@@ -1,0 +1,162 @@
+openapi: 3.1.1
+info:
+  title: HostoMytho API
+  description: |-
+    This is a sample description.
+  version: "1.0"
+servers:
+  - url: http://localhost:3001
+    description: Default localhost
+security:
+  - {}
+tags:
+  - name: MythoOuPas
+paths:
+  /plausibility/getText:
+    get:
+      tags:
+        - MythoOuPas
+      summary: Randomly gets a text to send to the player
+      x-stability-level: stable
+      parameters:
+        - in: query
+          name: user
+          schema:
+            type: integer
+          example: 28
+          required: true
+          description: The User id
+      responses:
+        200:
+          description: "Success"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    description: Text id
+                    type: integer
+                    example: 442
+                  sentence_positions:
+                    description: Comma-separated list of sentences, or `full` if all sentences are provided
+                    type: string
+                    example: "1, 2, 3, 4"
+                    pattern: "full|(\\d+, )*\\d+"
+                  tokens:
+                    description: Tokens of the text to evaluate
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          description: Token id
+                          type: integer
+                          example: 172977
+                        content:
+                          description: Token text
+                          type: string
+                          example: "Bonjour "
+                        position:
+                          description: Token position to rebuild the text to evaluate (starts at 0)
+                          type: integer
+                          example: 0
+                          minimum: 0
+                        is_punctuation:
+                          description: Whether this token is punctuation
+                          type: boolean
+                          example: false
+              example:
+                id: 442
+                sentence_positions: full
+                tokens:
+                  - id: 1452
+                    content: "Bonjour "
+                    position: 0
+                    is_punctuation: false
+                  - id: 1453
+                    content: "le "
+                    position: 1
+                    is_punctuation: false
+                  - id: 1454
+                    content: "monde"
+                    position: 2
+                    is_punctuation: false
+                  - id: 1455
+                    content: "."
+                    position: 3
+                    is_punctuation: true
+
+        400:
+          description: "No user ID provided or unknown user"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+              example:
+                code: no-user-with-id
+                error: Could not find player with this ID.
+        404:
+          description: Could not provide a text
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+              examples:
+                no-test-texts:
+                  summary: No test texts available
+                  description: TODO
+                  value:
+                    code: no-test-texts
+                    error: No more texts to process
+                no-group-texts:
+                  summary: No group texts available
+                  value:
+                    code: no-group-texts
+                    error: No suitable group text found
+                no-texts:
+                  summary: No unseen texts available
+                  value:
+                    code: no-texts
+                    error: No more texts to process
+                already-did-this-text-full:
+                  summary: Player already evaluated the text
+                  value:
+                    code: already-did-this-text-full
+                    error: This player already evaluated the entirety of this text.
+                already-did-this-text-portion:
+                  summary: Player already evaluated this part of the text
+                  value:
+                    code: already-did-this-text-portion
+                    error: The player already evaluated these sentences from this text.
+                no-sentences:
+                  summary: No sentences for this text
+                  value:
+                    code: no-sentences
+                    error: Text 442 has no sentences
+
+        500:
+          description: Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: false
+                properties:
+                  error:
+                    description: Error message
+                    type: string
+                    example: "Internal server error"
+
+components:
+  schemas:
+    Error:
+      type: object
+      additionalProperties: false
+      properties:
+        code:
+          description: Machine-readable error code
+          type: string
+        error:
+          description: Human-readable error message
+          type: string
