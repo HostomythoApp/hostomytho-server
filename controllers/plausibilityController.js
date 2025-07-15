@@ -22,21 +22,21 @@ const getText = async (req, res) => {
       .json({ code: "no-user-with-id", error: "Could not find player with this ID." });
   }
 
-  const randomNumber = Math.floor(Math.random() * 100);
+  let randomNumber = Math.floor(Math.random() * 100);
   const text_length_in_game = getVariableFromCache("text_length_in_game") || 110;
   const percentage_test_mythooupas = getVariableFromCache("percentage_test_mythooupas") || 25;
   const text_already_treated_mythooupas =
     getVariableFromCache("text_already_treated_mythooupas") || 20;
 
-  const sumTextAlreadyTreated = percentage_test_mythooupas + text_already_treated_mythooupas;
-  let text, group;
-
   try {
     if (randomNumber < percentage_test_mythooupas) {
       return await getTextTestPlausibility(req, res);
-    } else if (randomNumber >= percentage_test_mythooupas && randomNumber < sumTextAlreadyTreated) {
+    }
+    randomNumber -= percentage_test_mythooupas;
+
+    if (randomNumber < text_already_treated_mythooupas) {
       // Choix d'un texte déjà joué tiré de GroupTextRating
-      group = await GroupTextRating.findOne({
+      let group = await GroupTextRating.findOne({
         // Prevents getting a GroupTextRating the player already partook in
         // Sequelize does not natively support NOT EXISTS, hence why we have to use a raw literal here
         where: sequelize.literal(
@@ -78,118 +78,116 @@ const getText = async (req, res) => {
       };
 
       return res.status(200).json(result);
-    } else {
-      // TODO: Rework the whole query/function logic to use random, but be assured to send back a text that the player never saw before
-      // Right now we still could use RAND(), but query up to 20 texts, but there could be unlucky times where all 20 texts should be discarded...
-      text = await Text.findOne({
-        where: { is_plausibility_test: false, is_active: true },
-        attributes: ["id"],
-        order: Sequelize.literal("RAND()"),
-        include: [
-          {
-            model: UserTextRating,
-            required: false,
-            where: {
-              user_id: user.id,
-            },
-          },
-        ],
-      });
-
-      if (!text) {
-        return res.status(404).json({ code: "no-texts", error: "No more texts to process" });
-      }
-
-      if (text.user_text_ratings.some((rating) => rating.sentence_positions === "full")) {
-        return res.status(404).json({
-          code: "already-did-this-text-full",
-          error: "The player already evaluated the entirety of this text.",
-        });
-      }
-
-      // Récupérer les phrases du texte sélectionné, triées par leur position
-      let sentences = await getSentences(text.id);
-
-      if (sentences.length === 0) {
-        return res
-          .status(404)
-          .json({ code: "no-sentences", error: "Text " + text.id + " has no sentences" });
-      }
-
-      // Calculer le nombre total de tokens pour chaque phrase
-      let totalTokensBySentence = sentences.map((sentence) => sentence.tokens.length);
-
-      // Calculer le total cumulatif de tokens pour identifier les points de départ possibles
-      let cumulativeTokens = totalTokensBySentence.reduce((acc, curr, i) => {
-        acc.push((acc[i - 1] || 0) + curr);
-        return acc;
-      }, []);
-
-      let selectedSentences = [];
-      let totalTokens = 0;
-
-      if (cumulativeTokens[cumulativeTokens.length - 1] < text_length_in_game) {
-        selectedSentences = [...sentences]; // Utiliser toutes les sentences
-        totalTokens = cumulativeTokens[cumulativeTokens.length - 1]; // Total de tokens du texte
-      } else {
-        // Déterminer le maxStartIndex correctement sans utiliser startIndex dans le calcul
-        const validStartIndexes = cumulativeTokens
-          .map((cumulative, idx) => (cumulative >= text_length_in_game ? idx : -1))
-          .filter((idx) => idx !== -1);
-
-        if (validStartIndexes.length === 0) {
-          return res.status(404).json({ error: "Cannot find a suitable start position" });
-        }
-
-        const randomValidIndex =
-          validStartIndexes[Math.floor(Math.random() * validStartIndexes.length)];
-        const startIndex = randomValidIndex;
-
-        let startFromEnd = Math.random() < 0.5; // 50% chance de commencer par la fin
-        if (startFromEnd) {
-          for (let i = sentences.length - 1; i >= 0 && totalTokens < text_length_in_game; i--) {
-            selectedSentences.unshift(sentences[i]); // Ajouter au début pour conserver l'ordre
-            totalTokens += sentences[i].tokens.length;
-            if (totalTokens >= text_length_in_game) break;
-          }
-        } else {
-          for (let i = startIndex; i < sentences.length && totalTokens < text_length_in_game; i++) {
-            selectedSentences.push(sentences[i]);
-            totalTokens += sentences[i].tokens.length;
-            if (totalTokens >= text_length_in_game) break;
-          }
-        }
-      }
-
-      const selectedSentencesStr = selectedSentences
-        .map((sentence) => sentence.position)
-        .join(", ");
-      if (text.user_text_ratings.some((utr) => utr.sentence_positions === selectedSentencesStr)) {
-        return res.status(404).json({
-          code: "already-did-this-text-portion",
-          error: "The player already evaluated these sentences from this text.",
-        });
-      }
-
-      let groupedTokens = selectedSentences.flatMap((sentence) =>
-        sentence.tokens.map((token) => ({
-          id: token.id,
-          content: token.content,
-          position: token.position,
-          is_punctuation: token.is_punctuation,
-        }))
-      );
-
-      // Construire le résultat final
-      let result = {
-        id: text.id,
-        sentence_positions:
-          selectedSentences.length === sentences.length ? "full" : selectedSentencesStr,
-        tokens: groupedTokens,
-      };
-
-      res.status(200).json(result);
     }
+
+    // TODO: Rework the whole query/function logic to use random, but be assured to send back a text that the player never saw before
+    // Right now we still could use RAND(), but query up to 20 texts, but there could be unlucky times where all 20 texts should be discarded...
+    let text = await Text.findOne({
+      where: { is_plausibility_test: false, is_active: true },
+      attributes: ["id"],
+      order: Sequelize.literal("RAND()"),
+      include: [
+        {
+          model: UserTextRating,
+          required: false,
+          where: {
+            user_id: user.id,
+          },
+        },
+      ],
+    });
+
+    if (!text) {
+      return res.status(404).json({ code: "no-texts", error: "No more texts to process" });
+    }
+
+    if (text.user_text_ratings.some((rating) => rating.sentence_positions === "full")) {
+      return res.status(404).json({
+        code: "already-did-this-text-full",
+        error: "The player already evaluated the entirety of this text.",
+      });
+    }
+
+    // Récupérer les phrases du texte sélectionné, triées par leur position
+    let sentences = await getSentences(text.id);
+
+    if (sentences.length === 0) {
+      return res
+        .status(404)
+        .json({ code: "no-sentences", error: "Text " + text.id + " has no sentences" });
+    }
+
+    // Calculer le nombre total de tokens pour chaque phrase
+    let totalTokensBySentence = sentences.map((sentence) => sentence.tokens.length);
+
+    // Calculer le total cumulatif de tokens pour identifier les points de départ possibles
+    let cumulativeTokens = totalTokensBySentence.reduce((acc, curr, i) => {
+      acc.push((acc[i - 1] || 0) + curr);
+      return acc;
+    }, []);
+
+    let selectedSentences = [];
+    let totalTokens = 0;
+
+    if (cumulativeTokens[cumulativeTokens.length - 1] < text_length_in_game) {
+      selectedSentences = [...sentences]; // Utiliser toutes les sentences
+      totalTokens = cumulativeTokens[cumulativeTokens.length - 1]; // Total de tokens du texte
+    } else {
+      // Déterminer le maxStartIndex correctement sans utiliser startIndex dans le calcul
+      const validStartIndexes = cumulativeTokens
+        .map((cumulative, idx) => (cumulative >= text_length_in_game ? idx : -1))
+        .filter((idx) => idx !== -1);
+
+      if (validStartIndexes.length === 0) {
+        return res.status(404).json({ error: "Cannot find a suitable start position" });
+      }
+
+      const randomValidIndex =
+        validStartIndexes[Math.floor(Math.random() * validStartIndexes.length)];
+      const startIndex = randomValidIndex;
+
+      let startFromEnd = Math.random() < 0.5; // 50% chance de commencer par la fin
+      if (startFromEnd) {
+        for (let i = sentences.length - 1; i >= 0 && totalTokens < text_length_in_game; i--) {
+          selectedSentences.unshift(sentences[i]); // Ajouter au début pour conserver l'ordre
+          totalTokens += sentences[i].tokens.length;
+          if (totalTokens >= text_length_in_game) break;
+        }
+      } else {
+        for (let i = startIndex; i < sentences.length && totalTokens < text_length_in_game; i++) {
+          selectedSentences.push(sentences[i]);
+          totalTokens += sentences[i].tokens.length;
+          if (totalTokens >= text_length_in_game) break;
+        }
+      }
+    }
+
+    const selectedSentencesStr = selectedSentences.map((sentence) => sentence.position).join(", ");
+    if (text.user_text_ratings.some((utr) => utr.sentence_positions === selectedSentencesStr)) {
+      return res.status(404).json({
+        code: "already-did-this-text-portion",
+        error: "The player already evaluated these sentences from this text.",
+      });
+    }
+
+    let groupedTokens = selectedSentences.flatMap((sentence) =>
+      sentence.tokens.map((token) => ({
+        id: token.id,
+        content: token.content,
+        position: token.position,
+        is_punctuation: token.is_punctuation,
+      }))
+    );
+
+    // Construire le résultat final
+    let result = {
+      id: text.id,
+      sentence_positions:
+        selectedSentences.length === sentences.length ? "full" : selectedSentencesStr,
+      tokens: groupedTokens,
+    };
+
+    res.status(200).json(result);
   } catch (error) {
     console.error(error.message);
     res.status(500).json({ error: error.message });
@@ -480,10 +478,10 @@ const getTextTestPlausibility = async (req, res) => {
     console.debug(text); // check what the returned data format looks like
     text.tokens.sort((a, b) => a.position - b.position);
     text.dataValues.sentence_positions = "1, 2, 3, 4"; // TODO: why is it set to such value here?
-    res.status(200).json(text);
+    return res.status(200).json(text);
   } catch (error) {
     console.error(error.message);
-    res.status(500).json({ error: error.message });
+    return res.status(500).json({ error: error.message });
   }
 };
 
