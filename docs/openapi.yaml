@@ -160,3 +160,6 @@ components:
         error:
           description: Human-readable error message
           type: string
+      required:
+        - code
+        - error
