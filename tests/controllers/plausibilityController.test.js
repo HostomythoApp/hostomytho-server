@@ -1,7 +1,7 @@
-const { getText } = require("./plausibilityController");
+const { getText } = require("../../src/controllers/plausibilityController");
 const { mockRandom, resetMockRandom } = require("jest-mock-random");
-const { Text, GroupTextRating } = require("../models");
-const { getUserById } = require("./userController");
+const { Text, GroupTextRating } = require("../../src/models");
+const { getUserById } = require("../../src/controllers/userController");
 
 jest.mock("../models");
 jest.mock("./userController");

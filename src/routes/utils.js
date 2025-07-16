@@ -237,8 +237,8 @@ router.get("/getDefinition", async (req, res) => {
     return res.status(400).json({ error: "No word provided" });
   }
 
-  const scriptToRun = "./scripts/lemmatize.py";
-  const command = `./hostomythoenv/bin/python ${scriptToRun} "${word}"`;
+  const scriptToRun = "../scripts/lemmatize.py";
+  const command = `../hostomythoenv/bin/python ${scriptToRun} "${word}"`;
 
   exec(command, async (error, stdout, stderr) => {
     if (error || stderr) {

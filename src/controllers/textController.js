@@ -296,10 +296,10 @@ const createText = async (req, res) => {
       return res.status(400).json({ error: "Content is required" });
     }
 
-    const scriptToRun = "./scripts/spacyTokenAndSentence.py";
+    const scriptToRun = "../scripts/spacyTokenAndSentence.py";
 
     exec(
-      `./hostomythoenv/bin/python ${scriptToRun} "${content}"`,
+      `../hostomythoenv/bin/python ${scriptToRun} "${content}"`,
       async (error, stdout, stderr) => {
         if (error) {
           console.error(`exec error: ${error}`);

@@ -3,7 +3,7 @@ var path = require("path");
 var cors = require("cors");
 var cookieParser = require("cookie-parser");
 var logger = require("morgan");
-const OpenApiValidator = require('express-openapi-validator');
+const OpenApiValidator = require("express-openapi-validator");
 const PORT = 3001;
 const { connectToDb } = require("./service/db");
 const { cleanExpiredTokens } = require("./service/utils");
@@ -51,14 +51,14 @@ app.use(logger("dev"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
-app.use(express.static(path.join(__dirname, "public")));
+app.use(express.static(path.join(__dirname, "../public")));
 app.use(
   OpenApiValidator.middleware({
-    apiSpec: path.join(__dirname, 'docs/openapi.yaml'),
+    apiSpec: path.join(__dirname, "../docs/openapi.yaml"),
     validateRequests: true,
     validateResponses: true,
-    ignoreUndocumented: true // considering none of the routes are documented, it's better to keep this off for now.
-  }),
+    ignoreUndocumented: true, // considering none of the routes are documented, it's better to keep this off for now.
+  })
 );
 
 app.use((err, req, res, next) => {

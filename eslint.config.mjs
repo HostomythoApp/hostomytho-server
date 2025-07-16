@@ -7,7 +7,7 @@ export default defineConfig([
   globalIgnores(["**/coverage/*", "**/hostomythoenv/*"]),
   { files: ["**/*.{js,mjs,cjs}"], plugins: { js }, extends: ["js/recommended"] },
   {
-    files: ["**/*.test.{js,mjs,cjs}"],
+    files: ["tests/**/*.test.{js,mjs,cjs}"],
     plugins: { jest },
     extends: ["jest/recommended"],
     languageOptions: { globals: globals.jest },
