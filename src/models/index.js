@@ -407,6 +407,7 @@ UserSentenceSpecification.belongsTo(Text, {
   targetKey: "id",
 });
 
+// TODO: once we're switched to the migrations system, remove this line
 sequelize.sync();
 
 module.exports = models;
