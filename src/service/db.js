@@ -1,9 +1,10 @@
 require("dotenv").config();
 const { Sequelize } = require("sequelize");
+const db_config = require("../../db/config/config")[process.env.NODE_ENV];
 
-const sequelize = new Sequelize(process.env.DB_NAME, process.env.DB_USER, process.env.DB_PASSWORD, {
-  host: process.env.DB_HOST,
-  dialect: process.env.DB_DIALECT,
+const sequelize = new Sequelize(db_config.database, db_config.username, db_config.password, {
+  host: db_config.host,
+  dialect: db_config.dialect,
   logging: false,
   timezone: "+02:00",
   define: {
