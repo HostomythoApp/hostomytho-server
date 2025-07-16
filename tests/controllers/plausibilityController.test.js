@@ -3,8 +3,8 @@ const { mockRandom, resetMockRandom } = require("jest-mock-random");
 const { Text, GroupTextRating } = require("../../src/models");
 const { getUserById } = require("../../src/controllers/userController");
 
-jest.mock("../models");
-jest.mock("./userController");
+jest.mock("../../src/models");
+jest.mock("../../src/controllers/userController");
 
 const mockRequest = (query, sessionData) => {
   return {
