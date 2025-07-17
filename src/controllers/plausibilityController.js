@@ -61,7 +61,7 @@ const getTextGroupPlausibility = async (req, res, user) => {
     },
   });
 
-  if (!group || !group.text) {
+  if (!group) {
     return res.status(404).json({ code: "no-group-texts", error: "No suitable group text found" });
   }
 
