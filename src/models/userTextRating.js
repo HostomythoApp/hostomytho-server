@@ -26,7 +26,7 @@ module.exports = (sequelize, DataTypes) => {
         },
       },
       plausibility: {
-        type: DataTypes.DECIMAL(5,2),
+        type: DataTypes.DECIMAL(5, 2),
         allowNull: false,
       },
       sentence_positions: {
@@ -43,8 +43,8 @@ module.exports = (sequelize, DataTypes) => {
         },
       },
       created_at: {
-        type: DataTypes.TIME
-      }
+        type: DataTypes.TIME,
+      },
     },
     {
       sequelize,
