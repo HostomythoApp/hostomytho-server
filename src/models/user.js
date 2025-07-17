@@ -28,6 +28,7 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.STRING(255),
         defaultValue: "",
         allowNull: true,
+        unique: true,
       },
       points: {
         type: DataTypes.INTEGER,
@@ -39,7 +40,7 @@ module.exports = (sequelize, DataTypes) => {
       },
       trust_index: {
         type: DataTypes.INTEGER,
-        defaultValue: 0,
+        defaultValue: 50,
       },
       notifications_enabled: {
         type: DataTypes.BOOLEAN,
@@ -66,18 +67,17 @@ module.exports = (sequelize, DataTypes) => {
       },
       consecutiveDaysPlayed: {
         type: DataTypes.INTEGER,
-        defaultValue: 1,
+        defaultValue: 0,
       },
       lastPlayedDate: {
         type: DataTypes.STRING(45),
-        unique: true,
       },
       created_at: {
         type: DataTypes.STRING(45),
       },
       coeffMulti: {
         type: DataTypes.DECIMAL(2, 1),
-        defaultValue: 0,
+        defaultValue: 1.0,
       },
       nb_first_monthly: {
         type: DataTypes.INTEGER,
