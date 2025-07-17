@@ -12,7 +12,6 @@ module.exports = (sequelize, DataTypes) => {
       },
       user_id: {
         type: DataTypes.INTEGER,
-        allowNull: true,
         references: {
           model: "users",
           key: "id",
@@ -27,7 +26,7 @@ module.exports = (sequelize, DataTypes) => {
         },
       },
       plausibility: {
-        type: DataTypes.DECIMAL,
+        type: DataTypes.DECIMAL(5,2),
         allowNull: false,
       },
       sentence_positions: {
@@ -35,16 +34,17 @@ module.exports = (sequelize, DataTypes) => {
       },
       vote_weight: {
         type: DataTypes.INTEGER,
-        allowNull: false,
       },
       group_id: {
         type: DataTypes.INTEGER,
-        allowNull: false,
         references: {
           model: "group_text_rating",
           key: "id",
         },
       },
+      created_at: {
+        type: DataTypes.TIME
+      }
     },
     {
       sequelize,
