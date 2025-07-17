@@ -26,7 +26,6 @@ var testError = require("./routes/testError");
 var criminals = require("./routes/criminals");
 var games = require("./routes/games");
 var messages = require("./routes/messages");
-var comments = require("./routes/comments");
 var stats = require("./routes/stats");
 var variables = require("./routes/variables");
 
@@ -85,7 +84,6 @@ app.use("/testError", testError);
 app.use("/criminals", criminals);
 app.use("/games", games);
 app.use("/messages", messages);
-app.use("/comments", comments);
 app.use("/stats", stats);
 app.use("/variables", variables);
 module.exports = app;

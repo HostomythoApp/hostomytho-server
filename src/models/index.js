@@ -22,10 +22,7 @@ const MessageContactModel = require("./messageContact.js");
 const PasswordResetTokenModel = require("./passwordResetToken.js");
 const RefreshTokenModel = require("./refreshToken.js");
 const MonthlyWinnersModel = require("./monthlyWinners.js");
-const TestPlausibilityErrorModel = require("./testPlausibilityError");
 const GroupTextRatingModel = require("./groupTextRating");
-const UserCommentsGroupTextRatingModel = require("./userCommentsGroupTextRating");
-const userCommentVotesModel = require("./userCommentVotes");
 const VariableModel = require("./variable");
 
 const Game = require("./games.js")(sequelize, Sequelize.DataTypes);
@@ -54,13 +51,7 @@ const MessageContact = MessageContactModel(sequelize, Sequelize.DataTypes);
 const PasswordResetToken = PasswordResetTokenModel(sequelize, Sequelize.DataTypes);
 const RefreshToken = RefreshTokenModel(sequelize, Sequelize.DataTypes);
 const MonthlyWinners = MonthlyWinnersModel(sequelize, Sequelize.DataTypes);
-const TestPlausibilityError = TestPlausibilityErrorModel(sequelize, Sequelize.DataTypes);
 const GroupTextRating = GroupTextRatingModel(sequelize, Sequelize.DataTypes);
-const UserCommentsGroupTextRating = UserCommentsGroupTextRatingModel(
-  sequelize,
-  Sequelize.DataTypes
-);
-const UserCommentVotes = userCommentVotesModel(sequelize, Sequelize.DataTypes);
 const models = {
   User: User,
   Achievement: Achievement,
@@ -87,10 +78,7 @@ const models = {
   PasswordResetToken,
   RefreshToken,
   MonthlyWinners,
-  TestPlausibilityError,
   GroupTextRating,
-  UserCommentsGroupTextRating,
-  UserCommentVotes,
   Variable,
 };
 
@@ -115,12 +103,6 @@ RefreshToken.belongsTo(models.User, {
 // *************** Associations User & MessageContact *******************
 MessageContact.belongsTo(User, {
   foreignKey: "user_id",
-  targetKey: "id",
-});
-
-// *************** Associations TestPlausibilityError & Text *******************
-models.TestPlausibilityError.belongsTo(models.Text, {
-  foreignKey: "text_id",
   targetKey: "id",
 });
 
@@ -264,32 +246,15 @@ UserTextRating.belongsTo(GroupTextRating, {
   foreignKey: "group_id",
 });
 
-// *************** Associations UserCommentsGroupTextRating *******************
-User.hasMany(UserCommentsGroupTextRating, { foreignKey: "user_id" });
-
+// *************** Associations GroupTextRating *******************
 Text.hasMany(GroupTextRating, { foreignKey: "text_id" });
 
 GroupTextRating.hasMany(UserTextRating, { foreignKey: "group_id" });
 
-GroupTextRating.hasMany(UserCommentsGroupTextRating, {
-  foreignKey: "group_id",
-});
-
-UserCommentsGroupTextRating.belongsTo(User, { foreignKey: "user_id" });
-UserCommentsGroupTextRating.belongsTo(GroupTextRating, {
-  foreignKey: "group_id",
-});
 GroupTextRating.belongsTo(Text, {
   foreignKey: "text_id",
   targetKey: "id",
 });
-
-// *************** Associations UserCommentVotes *******************
-User.hasMany(UserCommentVotes, { foreignKey: "user_id" });
-UserCommentVotes.belongsTo(User, { foreignKey: "user_id" });
-
-UserCommentsGroupTextRating.hasMany(UserCommentVotes, { foreignKey: "comment_id" });
-UserCommentVotes.belongsTo(UserCommentsGroupTextRating, { foreignKey: "comment_id" });
 
 // *************** Associations TestSpecification *******************
 Text.hasMany(TestSpecification, {
