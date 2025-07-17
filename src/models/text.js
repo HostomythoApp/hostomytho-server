@@ -10,7 +10,7 @@ module.exports = (sequelize, DataTypes) => {
         primaryKey: true,
       },
       num: {
-        type: DataTypes.TEXT,
+        type: DataTypes.STRING(45),
         allowNull: false,
         defaultValue: "",
       },
@@ -20,23 +20,29 @@ module.exports = (sequelize, DataTypes) => {
         defaultValue: "",
       },
       origin: {
-        type: DataTypes.STRING(45),
-        allowNull: true,
-        defaultValue: "generated",
+        type: DataTypes.ENUM("synthétique", "réel - vrai", "réel - faux"),
+        defaultValue: "synthétique",
+        allowNull: false,
       },
       is_plausibility_test: {
         type: DataTypes.BOOLEAN,
-        defaultValue: true,
+        defaultValue: false,
       },
       test_plausibility: {
         type: DataTypes.DECIMAL(5, 2),
-        allowNull: true,
-        defaultValue: 0,
+        defaultValue: null,
       },
       reason_for_rate: {
         type: DataTypes.TEXT,
-        allowNull: true,
-        defaultValue: "",
+        defaultValue: null,
+      },
+      is_hypothesis_specification_test: {
+        type: DataTypes.BOOLEAN,
+        defaultValue: false,
+      },
+      is_condition_specification_test: {
+        type: DataTypes.BOOLEAN,
+        defaultValue: false,
       },
       is_negation_specification_test: {
         type: DataTypes.BOOLEAN,
@@ -44,16 +50,14 @@ module.exports = (sequelize, DataTypes) => {
       },
       nb_of_treatments: {
         type: DataTypes.INTEGER,
-        allowNull: true,
         defaultValue: 0,
       },
       is_active: {
         type: DataTypes.BOOLEAN,
-        defaultValue: 1,
+        defaultValue: true,
       },
       length: {
         type: DataTypes.INTEGER,
-        allowNull: true,
         defaultValue: 0,
       },
     },
