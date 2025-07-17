@@ -2,8 +2,10 @@
 
 ## Install
 
+- Run `npm ci` to install all dependencies (this installs dependencies at the exact version stated in `package-lock.json`)
 - Copy and rename `.envExample` to `.env`, fill in the required values.
 - Create a database user and grant it privileges on `[db_name]`, `[db_name]_development` and `[db_name]_test`.
+- Run `npx sequelize db:create`
 - Run `npx sequelize db:migrate`
 - Run `npx sequelize db:seed:all` to populate db with some default values
 
