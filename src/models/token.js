@@ -15,15 +15,16 @@ module.exports = (sequelize, DataTypes) => {
       },
       text_id: {
         type: DataTypes.INTEGER,
-        allowNull: false,
+        references: {
+          model: "texts",
+          key: "id",
+        },
       },
       content: {
         type: DataTypes.STRING(45),
-        allowNull: false,
       },
       position: {
         type: DataTypes.INTEGER,
-        allowNull: false,
       },
       is_punctuation: {
         type: DataTypes.BOOLEAN,
@@ -31,6 +32,10 @@ module.exports = (sequelize, DataTypes) => {
       },
       sentence_id: {
         type: DataTypes.INTEGER,
+        references: {
+          model: "sentences",
+          key: "id",
+        },
       },
     },
     {

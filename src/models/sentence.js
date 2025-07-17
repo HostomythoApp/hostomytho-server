@@ -11,7 +11,6 @@ module.exports = (sequelize, DataTypes) => {
       },
       text_id: {
         type: DataTypes.INTEGER,
-        allowNull: false,
         references: {
           model: "texts",
           key: "id",
@@ -22,7 +21,6 @@ module.exports = (sequelize, DataTypes) => {
       },
       position: {
         type: DataTypes.INTEGER,
-        allowNull: false,
       },
     },
     {
