@@ -12,12 +12,10 @@ module.exports = (sequelize, DataTypes) => {
       num: {
         type: DataTypes.STRING(45),
         allowNull: false,
-        defaultValue: "",
       },
       content: {
         type: DataTypes.TEXT,
         allowNull: false,
-        defaultValue: "",
       },
       origin: {
         type: DataTypes.ENUM("synthétique", "réel - vrai", "réel - faux"),

@@ -12,7 +12,6 @@ module.exports = {
       num: {
         type: Sequelize.DataTypes.STRING(45),
         allowNull: false,
-        defaultValue: "",
       },
       content: {
         type: Sequelize.DataTypes.TEXT,

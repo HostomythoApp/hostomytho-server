@@ -11,9 +11,7 @@ module.exports = (sequelize, DataTypes) => {
         primaryKey: true,
       },
       name: {
-        type: DataTypes.STRING(50),
-        unique: true,
-        allowNull: false,
+        type: DataTypes.STRING(45),
       },
       // Vous pouvez ajouter d'autres champs ici si nécessaire pour votre jeu.
     },
