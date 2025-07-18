@@ -1,9 +1,9 @@
 const { getText } = require("../../src/controllers/plausibilityController");
 const { mockRandom, resetMockRandom } = require("jest-mock-random");
-const { Text, GroupTextRating } = require("../../src/models");
+const { Text, Sentence, Token } = require("../../src/models");
+const { sequelize } = require("../../src/service/db");
 const { getUserById } = require("../../src/controllers/userController");
 
-jest.mock("../../src/models");
 jest.mock("../../src/controllers/userController");
 
 const mockRequest = (query, sessionData) => {
@@ -19,6 +19,64 @@ const mockResponse = () => {
   res.json = jest.fn().mockReturnValue(res);
   return res;
 };
+
+const createText = async (params) => {
+  const { text_id, is_active, is_plausibility_test } = params ?? {
+    text_id: 1,
+    is_active: true,
+    is_plausibility_test: false,
+  };
+  await Text.create({
+    id: text_id,
+    num: "test1",
+    content: "Bienvenue à bord.",
+    origin: "réel - faux",
+    is_active: is_active,
+    is_plausibility_test: is_plausibility_test,
+  });
+  const sentence = await Sentence.create({
+    text_id: text_id,
+    content: "Bienvenue à bord.",
+    position: 1,
+  });
+  await Token.create({
+    text_id: text_id,
+    sentence_id: sentence.id,
+    content: "Bienvenue ",
+    is_punctuation: false,
+    position: 1,
+  });
+  await Token.create({
+    text_id: text_id,
+    sentence_id: sentence.id,
+    content: "à ",
+    is_punctuation: false,
+    position: 2,
+  });
+  await Token.create({
+    text_id: text_id,
+    sentence_id: sentence.id,
+    content: "bord",
+    is_punctuation: false,
+    position: 3,
+  });
+  await Token.create({
+    text_id: text_id,
+    sentence_id: sentence.id,
+    content: ".",
+    is_punctuation: true,
+    position: 4,
+  });
+};
+
+afterAll(async () => {
+  await sequelize.close();
+});
+
+afterEach(async () => {
+  resetMockRandom();
+  await Text.destroy({ where: {} }); // destroy all texts, truncate doesn't work due to foreign keys constraints
+});
 
 describe("getText", () => {
   it.each`
@@ -46,17 +104,28 @@ describe("getText", () => {
     const res = mockResponse();
     getUserById.mockReturnValue({ id: 1 });
 
-    const expected = {
-      id: 1,
-      dataValues: {}, // required to avoid undefined
-      tokens: [], // required to avoid undefined
-    };
-    Text.findOne.mockReturnValue(expected);
+    const text_id = 1;
+    await createText({ text_id, is_active: true, is_plausibility_test: true });
 
     await getText(req, res);
 
     expect(res.status).toHaveBeenCalledWith(200);
-    expect(res.json).toHaveBeenCalledWith(expected);
+    expect(res.json).toHaveBeenCalledWith(expect.objectContaining({ id: text_id }));
+  });
+
+  it("should return 404 if test text is available but not active", async () => {
+    mockRandom(0.0);
+    const req = mockRequest({ user: 1 });
+    const res = mockResponse();
+    getUserById.mockReturnValue({ id: 1 });
+
+    const text_id = 1;
+    await createText({ text_id, is_active: false, is_plausibility_test: true });
+
+    await getText(req, res);
+
+    expect(res.status).toHaveBeenCalledWith(404);
+    expect(res.json).toHaveBeenCalledWith(expect.objectContaining({ code: "no-test-texts" }));
   });
 
   it("should return 400 if no user was provided in req query params", async () => {
@@ -75,9 +144,5 @@ describe("getText", () => {
         return GroupTextRatingMock.build({ id: queryOptions[0].where.id });
       }
     });*/
-  });
-
-  afterEach(() => {
-    resetMockRandom();
   });
 });
