@@ -16,6 +16,8 @@ module.exports = {
           model: "texts",
           key: "id",
         },
+        onDelete: "CASCADE",
+        onUpdate: "CASCADE",
       },
       sentence_positions: {
         type: Sequelize.DataTypes.STRING,

@@ -15,6 +15,8 @@ module.exports = {
           model: "texts",
           key: "id",
         },
+        onDelete: "CASCADE",
+        onUpdate: "CASCADE",
       },
       content: {
         type: Sequelize.DataTypes.STRING(45),
@@ -32,6 +34,8 @@ module.exports = {
           model: "sentences",
           key: "id",
         },
+        onDelete: "SET NULL",
+        onUpdate: "SET NULL",
       },
     });
   },

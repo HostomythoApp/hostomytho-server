@@ -15,6 +15,8 @@ module.exports = {
           model: "texts",
           key: "id",
         },
+        onDelete: "CASCADE",
+        onUpdate: "CASCADE",
       },
       content: {
         type: Sequelize.DataTypes.TEXT,
