@@ -1,6 +1,6 @@
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
-const { User, Achievement, UserSkin, MonthlyWinners, Skin, RefreshToken } = require("../models");
+const { User, Achievement, UserSkin, MonthlyWinners, Skin } = require("../models");
 const { QueryTypes } = require("sequelize");
 const { sequelize } = require("../service/db.js");
 const moment = require("moment");
@@ -143,19 +143,6 @@ const signin = async (req, res) => {
     if (!isPasswordValid) {
       return res.status(401).json({ error: "Invalid password" });
     }
-    // TODO Refresh token a revoir
-    // const accessToken = jwt.sign({ id: user.id, role: user.role }, process.env.JWT_SECRET, {
-    //   expiresIn: '24h'
-    // });
-
-    // const refreshToken = jwt.sign({ id: user.id, role: user.role }, process.env.JWT_REFRESH_SECRET, {
-    //   expiresIn: '7d'
-    // });
-    // await RefreshToken.create({
-    //   user_id: user.id,
-    //   token: refreshToken,
-    //   expires_at: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000) // 7 days from now
-    // });
 
     const token = jwt.sign(
       { id: user.id, moderator: user.moderator },

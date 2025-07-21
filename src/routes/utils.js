@@ -17,26 +17,6 @@ const mailjet = Mailjet.apiConnect(process.env.MJ_APIKEY_PUBLIC, process.env.MJ_
   options: {},
 });
 
-// router.post("/refreshToken", async (req, res) => {
-//   const { refreshToken } = req.body;
-//   if (!refreshToken)
-//     return res.status(401).json({ error: "Refresh Token is required" });
-
-//   try {
-//     const userData = jwt.verify(refreshToken, process.env.JWT_REFRESH_SECRET);
-//     const newAccessToken = jwt.sign(
-//       { id: userData.id, role: userData.role },
-//       process.env.JWT_SECRET,
-//       {
-//         expiresIn: "24h",
-//       }
-//     );
-//     res.json({ accessToken: newAccessToken });
-//   } catch (error) {
-//     return res.status(403).json({ error: "Invalid or Expired Refresh Token" });
-//   }
-// });
-
 // **************** Dump data  ****************
 router.post("/dump/tables", adminAuthMiddleware, utilsController.dumpTables);
 

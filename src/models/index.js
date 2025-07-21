@@ -20,7 +20,6 @@ const CriminalModel = require("./criminal.js");
 const UserCriminalModel = require("./userCriminal");
 const MessageContactModel = require("./messageContact.js");
 const PasswordResetTokenModel = require("./passwordResetToken.js");
-const RefreshTokenModel = require("./refreshToken.js");
 const MonthlyWinnersModel = require("./monthlyWinners.js");
 const GroupTextRatingModel = require("./groupTextRating");
 const VariableModel = require("./variable");
@@ -49,7 +48,6 @@ const Criminal = CriminalModel(sequelize, Sequelize.DataTypes);
 const UserCriminal = UserCriminalModel(sequelize, Sequelize.DataTypes);
 const MessageContact = MessageContactModel(sequelize, Sequelize.DataTypes);
 const PasswordResetToken = PasswordResetTokenModel(sequelize, Sequelize.DataTypes);
-const RefreshToken = RefreshTokenModel(sequelize, Sequelize.DataTypes);
 const MonthlyWinners = MonthlyWinnersModel(sequelize, Sequelize.DataTypes);
 const GroupTextRating = GroupTextRatingModel(sequelize, Sequelize.DataTypes);
 const models = {
@@ -76,7 +74,6 @@ const models = {
   UserTutorial: UserTutorial,
   MessageContact: MessageContact,
   PasswordResetToken,
-  RefreshToken,
   MonthlyWinners,
   GroupTextRating,
   Variable,
@@ -90,12 +87,6 @@ MonthlyWinners.belongsTo(User, {
 
 // *************** Associations PasswordResetToken *******************
 PasswordResetToken.belongsTo(models.User, {
-  foreignKey: "userId",
-  targetKey: "id",
-});
-
-// *************** Associations RefreshToken *******************
-RefreshToken.belongsTo(models.User, {
   foreignKey: "userId",
   targetKey: "id",
 });
