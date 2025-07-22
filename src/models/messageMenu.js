@@ -11,11 +11,9 @@ module.exports = (sequelize, DataTypes) => {
       },
       title: {
         type: DataTypes.STRING(255),
-        allowNull: true,
       },
       message: {
-        type: DataTypes.STRING(255),
-        allowNull: true,
+        type: DataTypes.TEXT("long"),
       },
       active: {
         type: DataTypes.BOOLEAN,
@@ -24,7 +22,6 @@ module.exports = (sequelize, DataTypes) => {
       message_type: {
         type: DataTypes.ENUM,
         values: ["home_not_connected", "home_connected"],
-        allowNull: true,
       },
     },
     {

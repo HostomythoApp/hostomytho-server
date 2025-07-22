@@ -12,11 +12,12 @@ module.exports = (sequelize, DataTypes) => {
       },
       user_id: {
         type: DataTypes.INTEGER,
-        allowNull: true,
         references: {
           model: "users",
           key: "id",
         },
+        onDelete: "SET NULL",
+        onUpdate: "SET NULL",
       },
       text_id: {
         type: DataTypes.INTEGER,
@@ -25,6 +26,8 @@ module.exports = (sequelize, DataTypes) => {
           model: "texts",
           key: "id",
         },
+        onDelete: "CASCADE",
+        onUpdate: "CASCADE",
       },
       type: {
         type: DataTypes.ENUM,
@@ -32,15 +35,19 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: false,
       },
       content: {
-        type: DataTypes.STRING,
-        allowNull: false,
+        type: DataTypes.TEXT("long"),
       },
       word_positions: {
-        type: DataTypes.STRING,
+        type: DataTypes.TEXT("long"),
         allowNull: false,
       },
       specification_weight: {
         type: DataTypes.INTEGER,
+        defaultValue: 0,
+      },
+      created_at: {
+        type: DataTypes.DATE,
+        defaultValue: DataTypes.NOW,
       },
     },
     {

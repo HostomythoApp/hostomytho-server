@@ -5,25 +5,28 @@ module.exports = (sequelize, DataTypes) => {
 
   MonthlyWinners.init(
     {
+      id: {
+        type: DataTypes.INTEGER,
+        primaryKey: true,
+        autoIncrement: true,
+      },
       user_id: {
         type: DataTypes.INTEGER,
-        allowNull: true,
         references: {
           model: "users",
           key: "id",
         },
+        onDelete: "SET NULL",
+        onUpdate: "SET NULL",
       },
       username: {
         type: DataTypes.STRING(50),
-        allowNull: true,
       },
       points: {
         type: DataTypes.INTEGER,
-        allowNull: true,
       },
       ranking: {
-        type: DataTypes.INTEGER,
-        allowNull: true,
+        type: DataTypes.TINYINT(4),
       },
     },
     {

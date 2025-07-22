@@ -3,41 +3,38 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
+    /**
+     * Add altering commands here.
+     *
+     * Example:
+     * await queryInterface.createTable('users', { id: Sequelize.INTEGER });
+     */
     await queryInterface.createTable(
-      "tokens",
+      "user_criminals",
       {
-        id: {
+        user_id: {
           type: Sequelize.DataTypes.INTEGER,
-          autoIncrement: true,
           primaryKey: true,
-        },
-        text_id: {
-          type: Sequelize.DataTypes.INTEGER,
           references: {
-            model: "texts",
+            model: "users",
             key: "id",
           },
           onDelete: "CASCADE",
           onUpdate: "CASCADE",
         },
-        content: {
-          type: Sequelize.DataTypes.STRING(45),
-        },
-        position: {
+        criminal_id: {
           type: Sequelize.DataTypes.INTEGER,
-        },
-        is_punctuation: {
-          type: Sequelize.DataTypes.BOOLEAN,
-          defaultValue: false,
-        },
-        sentence_id: {
-          type: Sequelize.DataTypes.INTEGER,
+          primaryKey: true,
           references: {
-            model: "sentences",
+            model: "criminals",
             key: "id",
           },
-          onDelete: "SET NULL",
-          onUpdate: "SET NULL",
+          onDelete: "CASCADE",
+          onUpdate: "CASCADE",
+        },
+        created_at: {
+          type: Sequelize.DataTypes.DATE,
+          defaultValue: Sequelize.DataTypes.NOW,
         },
       },
       { collate: "utf8mb4_unicode_ci" }
@@ -45,6 +42,6 @@ module.exports = {
   },
 
   async down(queryInterface, _Sequelize) {
-    await queryInterface.dropTable("tokens");
+    await queryInterface.dropTable("user_criminals");
   },
 };

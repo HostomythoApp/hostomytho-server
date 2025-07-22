@@ -4,40 +4,47 @@
 module.exports = {
   async up(queryInterface, Sequelize) {
     await queryInterface.createTable(
-      "tokens",
+      "user_text_rating",
       {
         id: {
           type: Sequelize.DataTypes.INTEGER,
-          autoIncrement: true,
           primaryKey: true,
+          autoIncrement: true,
+        },
+        user_id: {
+          type: Sequelize.DataTypes.INTEGER,
+          references: {
+            model: "users",
+            key: "id",
+          },
         },
         text_id: {
           type: Sequelize.DataTypes.INTEGER,
+          allowNull: false,
           references: {
             model: "texts",
             key: "id",
           },
-          onDelete: "CASCADE",
-          onUpdate: "CASCADE",
         },
-        content: {
-          type: Sequelize.DataTypes.STRING(45),
+        plausibility: {
+          type: Sequelize.DataTypes.DECIMAL(5, 2),
+          allowNull: false,
         },
-        position: {
+        sentence_positions: {
+          type: Sequelize.DataTypes.STRING,
+        },
+        vote_weight: {
           type: Sequelize.DataTypes.INTEGER,
         },
-        is_punctuation: {
-          type: Sequelize.DataTypes.BOOLEAN,
-          defaultValue: false,
-        },
-        sentence_id: {
+        group_id: {
           type: Sequelize.DataTypes.INTEGER,
           references: {
-            model: "sentences",
+            model: "group_text_rating",
             key: "id",
           },
-          onDelete: "SET NULL",
-          onUpdate: "SET NULL",
+        },
+        created_at: {
+          type: Sequelize.DataTypes.TIME,
         },
       },
       { collate: "utf8mb4_unicode_ci" }
@@ -45,6 +52,6 @@ module.exports = {
   },
 
   async down(queryInterface, _Sequelize) {
-    await queryInterface.dropTable("tokens");
+    await queryInterface.dropTable("user_text_rating");
   },
 };

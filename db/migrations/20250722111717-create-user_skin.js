@@ -4,40 +4,31 @@
 module.exports = {
   async up(queryInterface, Sequelize) {
     await queryInterface.createTable(
-      "tokens",
+      "user_skin",
       {
-        id: {
+        user_id: {
           type: Sequelize.DataTypes.INTEGER,
-          autoIncrement: true,
           primaryKey: true,
-        },
-        text_id: {
-          type: Sequelize.DataTypes.INTEGER,
           references: {
-            model: "texts",
+            model: "users",
             key: "id",
           },
           onDelete: "CASCADE",
           onUpdate: "CASCADE",
         },
-        content: {
-          type: Sequelize.DataTypes.STRING(45),
-        },
-        position: {
+        skin_id: {
           type: Sequelize.DataTypes.INTEGER,
-        },
-        is_punctuation: {
-          type: Sequelize.DataTypes.BOOLEAN,
-          defaultValue: false,
-        },
-        sentence_id: {
-          type: Sequelize.DataTypes.INTEGER,
+          primaryKey: true,
           references: {
-            model: "sentences",
+            model: "skins",
             key: "id",
           },
-          onDelete: "SET NULL",
-          onUpdate: "SET NULL",
+          onDelete: "CASCADE",
+          onUpdate: "CASCADE",
+        },
+        equipped: {
+          type: Sequelize.DataTypes.BOOLEAN,
+          defaultValue: false,
         },
       },
       { collate: "utf8mb4_unicode_ci" }
@@ -45,6 +36,6 @@ module.exports = {
   },
 
   async down(queryInterface, _Sequelize) {
-    await queryInterface.dropTable("tokens");
+    await queryInterface.dropTable("user_skin");
   },
 };

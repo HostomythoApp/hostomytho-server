@@ -4,15 +4,16 @@
 module.exports = {
   async up(queryInterface, Sequelize) {
     await queryInterface.createTable(
-      "tokens",
+      "group_text_rating",
       {
         id: {
           type: Sequelize.DataTypes.INTEGER,
-          autoIncrement: true,
           primaryKey: true,
+          autoIncrement: true,
         },
         text_id: {
           type: Sequelize.DataTypes.INTEGER,
+          allowNull: false,
           references: {
             model: "texts",
             key: "id",
@@ -20,31 +21,27 @@ module.exports = {
           onDelete: "CASCADE",
           onUpdate: "CASCADE",
         },
-        content: {
-          type: Sequelize.DataTypes.STRING(45),
+        sentence_positions: {
+          type: Sequelize.DataTypes.STRING,
+          allowNull: false,
         },
-        position: {
+        average_plausibility: {
           type: Sequelize.DataTypes.INTEGER,
         },
-        is_punctuation: {
-          type: Sequelize.DataTypes.BOOLEAN,
-          defaultValue: false,
-        },
-        sentence_id: {
+        votes_count: {
           type: Sequelize.DataTypes.INTEGER,
-          references: {
-            model: "sentences",
-            key: "id",
-          },
-          onDelete: "SET NULL",
-          onUpdate: "SET NULL",
+          defaultValue: 1,
+        },
+        created_at: {
+          type: Sequelize.DataTypes.DATE,
+          defaultValue: Sequelize.DataTypes.NOW,
         },
       },
-      { collate: "utf8mb4_unicode_ci" }
+      { collate: "utf8mb4_general_ci" }
     );
   },
 
   async down(queryInterface, _Sequelize) {
-    await queryInterface.dropTable("tokens");
+    await queryInterface.dropTable("group_text_rating");
   },
 };

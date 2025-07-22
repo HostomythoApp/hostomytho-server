@@ -7,7 +7,6 @@ module.exports = (sequelize, DataTypes) => {
     {
       id: {
         type: DataTypes.INTEGER,
-        allowNull: false,
         primaryKey: true,
         autoIncrement: true,
       },
@@ -17,25 +16,34 @@ module.exports = (sequelize, DataTypes) => {
           model: "users",
           key: "id",
         },
+        onDelete: "SET NULL",
+        onUpdate: "SET NULL",
       },
       user_error_details_id: {
         type: DataTypes.INTEGER,
-        allowNull: false,
         references: {
           model: "user_error_details",
           key: "id",
         },
+        onDelete: "CASCADE",
+        onUpdate: "CASCADE",
       },
       error_type_id: {
         type: DataTypes.INTEGER,
-        allowNull: false,
         references: {
           model: "error_types",
           key: "id",
         },
+        onDelete: "CASCADE",
+        onUpdate: "CASCADE",
       },
       weight: {
         type: DataTypes.INTEGER,
+        defaultValue: 50,
+      },
+      created_at: {
+        type: DataTypes.DATE,
+        defaultValue: DataTypes.NOW,
       },
     },
     {

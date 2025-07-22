@@ -4,27 +4,28 @@
 module.exports = {
   async up(queryInterface, Sequelize) {
     await queryInterface.createTable(
-      "sentences",
+      "password_reset_tokens",
       {
         id: {
           type: Sequelize.DataTypes.INTEGER,
-          autoIncrement: true,
           primaryKey: true,
+          autoIncrement: true,
         },
-        text_id: {
+        userId: {
           type: Sequelize.DataTypes.INTEGER,
+          allowNull: false,
           references: {
-            model: "texts",
+            model: "users",
             key: "id",
           },
-          onDelete: "CASCADE",
-          onUpdate: "CASCADE",
         },
-        content: {
-          type: Sequelize.DataTypes.TEXT,
+        token: {
+          type: Sequelize.DataTypes.STRING,
+          allowNull: false,
         },
-        position: {
-          type: Sequelize.DataTypes.INTEGER,
+        expires: {
+          type: Sequelize.DataTypes.DATE,
+          allowNull: false,
         },
       },
       { collate: "utf8mb4_unicode_ci" }
@@ -32,6 +33,6 @@ module.exports = {
   },
 
   async down(queryInterface, _Sequelize) {
-    await queryInterface.dropTable("sentences");
+    await queryInterface.dropTable("password_reset_tokens");
   },
 };

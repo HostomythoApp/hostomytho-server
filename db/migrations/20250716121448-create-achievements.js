@@ -3,37 +3,41 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable("achievements", {
-      id: {
-        type: Sequelize.DataTypes.INTEGER,
-        primaryKey: true,
-        autoIncrement: true,
+    await queryInterface.createTable(
+      "achievements",
+      {
+        id: {
+          type: Sequelize.DataTypes.INTEGER,
+          primaryKey: true,
+          autoIncrement: true,
+        },
+        name: {
+          type: Sequelize.DataTypes.STRING(50),
+          allowNull: false,
+          unique: true,
+        },
+        description: {
+          type: Sequelize.DataTypes.STRING(255),
+          defaultValue: null,
+        },
+        picto: {
+          type: Sequelize.DataTypes.STRING(45),
+          defaultValue: null,
+        },
+        color: {
+          type: Sequelize.DataTypes.STRING(45),
+          defaultValue: null,
+        },
+        lib: {
+          type: Sequelize.DataTypes.STRING(45),
+          defaultValue: null,
+        },
       },
-      name: {
-        type: Sequelize.DataTypes.STRING(50),
-        allowNull: false,
-        unique: true,
-      },
-      description: {
-        type: Sequelize.DataTypes.STRING(255),
-        defaultValue: null,
-      },
-      picto: {
-        type: Sequelize.DataTypes.STRING(45),
-        defaultValue: null,
-      },
-      color: {
-        type: Sequelize.DataTypes.STRING(45),
-        defaultValue: null,
-      },
-      lib: {
-        type: Sequelize.DataTypes.STRING(45),
-        defaultValue: null,
-      },
-    });
+      { collate: "utf8mb4_unicode_ci" }
+    );
   },
 
-  async down(queryInterface, Sequelize) {
+  async down(queryInterface, _Sequelize) {
     await queryInterface.dropTable("achievements");
   },
 };

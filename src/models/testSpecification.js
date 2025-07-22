@@ -7,7 +7,6 @@ module.exports = (sequelize, DataTypes) => {
     {
       id: {
         type: DataTypes.INTEGER,
-        allowNull: false,
         primaryKey: true,
         autoIncrement: true,
       },
@@ -18,19 +17,18 @@ module.exports = (sequelize, DataTypes) => {
           model: "texts",
           key: "id",
         },
+        onUpdate: "CASCADE",
+        onDelete: "CASCADE",
       },
       type: {
         type: DataTypes.ENUM,
         values: ["hypothesis", "condition", "negation"],
-        allowNull: false,
       },
       content: {
-        type: DataTypes.STRING,
-        allowNull: false,
+        type: DataTypes.TEXT("long"),
       },
       word_positions: {
-        type: DataTypes.STRING,
-        allowNull: false,
+        type: DataTypes.TEXT("long"),
       },
     },
     {

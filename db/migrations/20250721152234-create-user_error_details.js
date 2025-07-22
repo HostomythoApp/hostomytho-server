@@ -4,12 +4,21 @@
 module.exports = {
   async up(queryInterface, Sequelize) {
     await queryInterface.createTable(
-      "tokens",
+      "user_error_details",
       {
         id: {
           type: Sequelize.DataTypes.INTEGER,
-          autoIncrement: true,
           primaryKey: true,
+          autoIncrement: true,
+        },
+        user_id: {
+          type: Sequelize.DataTypes.INTEGER,
+          references: {
+            model: "users",
+            key: "id",
+          },
+          onDelete: "SET NULL",
+          onUpdate: "SET NULL",
         },
         text_id: {
           type: Sequelize.DataTypes.INTEGER,
@@ -20,24 +29,36 @@ module.exports = {
           onDelete: "CASCADE",
           onUpdate: "CASCADE",
         },
-        content: {
-          type: Sequelize.DataTypes.STRING(45),
+        word_positions: {
+          type: Sequelize.DataTypes.TEXT("long"),
         },
-        position: {
+        vote_weight: {
           type: Sequelize.DataTypes.INTEGER,
         },
-        is_punctuation: {
+        content: {
+          type: Sequelize.DataTypes.TEXT("long"),
+        },
+        is_test: {
           type: Sequelize.DataTypes.BOOLEAN,
           defaultValue: false,
         },
-        sentence_id: {
+        test_error_type_id: {
           type: Sequelize.DataTypes.INTEGER,
+          defaultValue: false,
           references: {
-            model: "sentences",
+            model: "error_types",
             key: "id",
           },
           onDelete: "SET NULL",
           onUpdate: "SET NULL",
+        },
+        reason_for_type: {
+          type: Sequelize.DataTypes.TEXT("long"),
+          defaultValue: "",
+        },
+        created_at: {
+          type: Sequelize.DataTypes.DATE,
+          defaultValue: Sequelize.DataTypes.NOW,
         },
       },
       { collate: "utf8mb4_unicode_ci" }
@@ -45,6 +66,6 @@ module.exports = {
   },
 
   async down(queryInterface, _Sequelize) {
-    await queryInterface.dropTable("tokens");
+    await queryInterface.dropTable("user_error_details");
   },
 };

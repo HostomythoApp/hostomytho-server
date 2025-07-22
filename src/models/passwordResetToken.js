@@ -4,6 +4,11 @@ module.exports = (sequelize, DataTypes) => {
   class PasswordResetToken extends Model {}
   PasswordResetToken.init(
     {
+      id: {
+        type: DataTypes.INTEGER,
+        primaryKey: true,
+        autoIncrement: true,
+      },
       userId: {
         type: DataTypes.INTEGER,
         allowNull: false,

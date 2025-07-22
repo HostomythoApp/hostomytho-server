@@ -7,25 +7,22 @@ module.exports = (sequelize, DataTypes) => {
     {
       id: {
         type: DataTypes.INTEGER,
-        allowNull: false,
         primaryKey: true,
         autoIncrement: true,
       },
       name: {
-        type: DataTypes.STRING,
+        type: DataTypes.STRING(50),
         allowNull: false,
       },
       imageId: {
-        type: DataTypes.STRING,
+        type: DataTypes.STRING(50),
         allowNull: false,
       },
       description: {
         type: DataTypes.TEXT("long"),
-        allowNull: true,
       },
       descriptionArrest: {
         type: DataTypes.TEXT("long"),
-        allowNull: true,
       },
     },
     {

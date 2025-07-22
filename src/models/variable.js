@@ -6,12 +6,12 @@ module.exports = (sequelize, DataTypes) => {
     {
       id: {
         type: DataTypes.INTEGER,
-        allowNull: false,
         primaryKey: true,
         autoIncrement: true,
       },
       key: {
         type: DataTypes.STRING,
+        unique: true,
         allowNull: false,
       },
       value: {
@@ -19,12 +19,11 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: false,
       },
       default_value: {
-        type: DataTypes.STRING,
+        type: DataTypes.INTEGER,
         allowNull: false,
       },
       description: {
-        type: DataTypes.STRING,
-        allowNull: true,
+        type: DataTypes.TEXT("long"),
       },
     },
     {

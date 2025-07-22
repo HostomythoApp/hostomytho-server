@@ -5,23 +5,28 @@ module.exports = (sequelize, DataTypes) => {
 
   UserTutorial.init(
     {
+      id: {
+        type: DataTypes.INTEGER,
+        primaryKey: true,
+        autoIncrement: true,
+      },
       user_id: {
         type: DataTypes.INTEGER,
-        allowNull: false,
-        primaryKey: true,
         references: {
           model: "users",
           key: "id",
         },
+        onDelete: "CASCADE",
+        onUpdate: "CASCADE",
       },
       game_id: {
         type: DataTypes.INTEGER,
-        allowNull: false,
-        primaryKey: true,
         references: {
           model: "games",
           key: "id",
         },
+        onDelete: "CASCADE",
+        onUpdate: "CASCADE",
       },
       completed: {
         type: DataTypes.BOOLEAN,

@@ -7,21 +7,27 @@ module.exports = (sequelize, DataTypes) => {
     {
       user_id: {
         type: DataTypes.INTEGER,
-        allowNull: false,
         primaryKey: true,
         references: {
           model: "users",
           key: "id",
         },
+        onDelete: "CASCADE",
+        onUpdate: "CASCADE",
       },
       criminal_id: {
         type: DataTypes.INTEGER,
-        allowNull: false,
         primaryKey: true,
         references: {
           model: "criminals",
           key: "id",
         },
+        onDelete: "CASCADE",
+        onUpdate: "CASCADE",
+      },
+      created_at: {
+        type: DataTypes.DATE,
+        defaultValue: DataTypes.NOW,
       },
     },
     {

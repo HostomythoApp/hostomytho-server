@@ -4,27 +4,30 @@
 module.exports = {
   async up(queryInterface, Sequelize) {
     await queryInterface.createTable(
-      "sentences",
+      "monthly_winners",
       {
         id: {
           type: Sequelize.DataTypes.INTEGER,
-          autoIncrement: true,
           primaryKey: true,
+          autoIncrement: true,
         },
-        text_id: {
+        user_id: {
           type: Sequelize.DataTypes.INTEGER,
           references: {
-            model: "texts",
+            model: "users",
             key: "id",
           },
-          onDelete: "CASCADE",
-          onUpdate: "CASCADE",
+          onDelete: "SET NULL",
+          onUpdate: "SET NULL",
         },
-        content: {
-          type: Sequelize.DataTypes.TEXT,
+        username: {
+          type: Sequelize.DataTypes.STRING(50),
         },
-        position: {
+        points: {
           type: Sequelize.DataTypes.INTEGER,
+        },
+        ranking: {
+          type: Sequelize.DataTypes.TINYINT(4),
         },
       },
       { collate: "utf8mb4_unicode_ci" }
@@ -32,6 +35,6 @@ module.exports = {
   },
 
   async down(queryInterface, _Sequelize) {
-    await queryInterface.dropTable("sentences");
+    await queryInterface.dropTable("monthly_winners");
   },
 };

@@ -4,34 +4,40 @@
 module.exports = {
   async up(queryInterface, Sequelize) {
     await queryInterface.createTable(
-      "sentences",
+      "user_achievement",
       {
-        id: {
+        user_id: {
           type: Sequelize.DataTypes.INTEGER,
-          autoIncrement: true,
           primaryKey: true,
-        },
-        text_id: {
-          type: Sequelize.DataTypes.INTEGER,
           references: {
-            model: "texts",
+            model: "users",
             key: "id",
           },
           onDelete: "CASCADE",
           onUpdate: "CASCADE",
         },
-        content: {
-          type: Sequelize.DataTypes.TEXT,
-        },
-        position: {
+        achievement_id: {
           type: Sequelize.DataTypes.INTEGER,
+          primaryKey: true,
+          references: {
+            model: "achievements",
+            key: "id",
+          },
+          onDelete: "CASCADE",
+          onUpdate: "CASCADE",
+        },
+        notified: {
+          type: Sequelize.DataTypes.BOOLEAN,
+          defaultValue: false,
         },
       },
-      { collate: "utf8mb4_unicode_ci" }
+      {
+        collate: "utf8mb4_unicode_ci",
+      }
     );
   },
 
   async down(queryInterface, _Sequelize) {
-    await queryInterface.dropTable("sentences");
+    await queryInterface.dropTable("user_achievement");
   },
 };

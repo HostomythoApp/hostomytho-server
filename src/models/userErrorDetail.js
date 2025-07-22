@@ -7,37 +7,35 @@ module.exports = (sequelize, DataTypes) => {
     {
       id: {
         type: DataTypes.INTEGER,
-        allowNull: false,
         primaryKey: true,
         autoIncrement: true,
       },
       user_id: {
         type: DataTypes.INTEGER,
-        allowNull: true,
         references: {
           model: "users",
           key: "id",
         },
+        onDelete: "SET NULL",
+        onUpdate: "SET NULL",
       },
       text_id: {
         type: DataTypes.INTEGER,
-        allowNull: false,
         references: {
           model: "texts",
           key: "id",
         },
+        onDelete: "CASCADE",
+        onUpdate: "CASCADE",
       },
       word_positions: {
-        type: DataTypes.STRING,
-        allowNull: false,
+        type: DataTypes.TEXT("long"),
       },
       vote_weight: {
         type: DataTypes.INTEGER,
-        allowNull: false,
       },
       content: {
-        type: DataTypes.STRING,
-        allowNull: false,
+        type: DataTypes.TEXT("long"),
       },
       is_test: {
         type: DataTypes.BOOLEAN,
@@ -46,11 +44,20 @@ module.exports = (sequelize, DataTypes) => {
       test_error_type_id: {
         type: DataTypes.INTEGER,
         defaultValue: false,
+        references: {
+          model: "error_types",
+          key: "id",
+        },
+        onDelete: "SET NULL",
+        onUpdate: "SET NULL",
       },
       reason_for_type: {
-        type: DataTypes.TEXT,
-        allowNull: true,
+        type: DataTypes.TEXT("long"),
         defaultValue: "",
+      },
+      created_at: {
+        type: DataTypes.DATE,
+        defaultValue: DataTypes.NOW,
       },
     },
     {

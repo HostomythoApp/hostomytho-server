@@ -12,7 +12,6 @@ module.exports = (sequelize, DataTypes) => {
       },
       user_id: {
         type: DataTypes.INTEGER,
-        allowNull: true,
         references: {
           model: "users",
           key: "id",
@@ -20,11 +19,9 @@ module.exports = (sequelize, DataTypes) => {
       },
       username: {
         type: DataTypes.STRING(255),
-        allowNull: true,
       },
       email: {
         type: DataTypes.STRING(255),
-        allowNull: true,
       },
       subject: {
         type: DataTypes.STRING(255),

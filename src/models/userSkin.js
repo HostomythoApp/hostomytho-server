@@ -7,21 +7,23 @@ module.exports = (sequelize, DataTypes) => {
     {
       user_id: {
         type: DataTypes.INTEGER,
-        allowNull: false,
         primaryKey: true,
         references: {
           model: "users",
           key: "id",
         },
+        onDelete: "CASCADE",
+        onUpdate: "CASCADE",
       },
       skin_id: {
         type: DataTypes.INTEGER,
-        allowNull: false,
         primaryKey: true,
         references: {
           model: "skins",
           key: "id",
         },
+        onDelete: "CASCADE",
+        onUpdate: "CASCADE",
       },
       equipped: {
         type: DataTypes.BOOLEAN,

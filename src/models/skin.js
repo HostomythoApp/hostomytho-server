@@ -12,7 +12,6 @@ module.exports = (sequelize, DataTypes) => {
       },
       name: {
         type: DataTypes.STRING(50),
-        unique: true,
         allowNull: false,
       },
       type: {
@@ -27,11 +26,9 @@ module.exports = (sequelize, DataTypes) => {
       },
       rarity: {
         type: DataTypes.INTEGER,
-        allowNull: false,
       },
       image_url: {
         type: DataTypes.STRING(255),
-        allowNull: true,
       },
     },
     {
