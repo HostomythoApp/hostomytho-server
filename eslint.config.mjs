@@ -5,6 +5,16 @@ import jest from "eslint-plugin-jest";
 
 export default defineConfig([
   globalIgnores(["**/coverage/*", "**/hostomythoenv/*"]),
+  {
+    rules: {
+      "no-unused-vars": [
+        "error",
+        {
+          argsIgnorePattern: "^_",
+        },
+      ],
+    },
+  },
   { files: ["**/*.{js,mjs,cjs}"], plugins: { js }, extends: ["js/recommended"] },
   {
     files: ["tests/**/*.test.{js,mjs,cjs}"],
