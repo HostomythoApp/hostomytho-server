@@ -92,9 +92,9 @@ router.delete("/:id", async function (req, res, next) {
         color_skin: "clear",
         tutorial_progress: 0,
         catch_probability: 0,
-        consecutiveDaysPlayed: 0,
-        lastPlayedDate: null,
-        coeffMulti: 0,
+        consecutive_days_played: 0,
+        last_played_date: null,
+        coeff_multi: 0,
         nb_first_monthly: 0,
       },
       {

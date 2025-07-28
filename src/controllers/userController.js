@@ -160,7 +160,7 @@ const signin = async (req, res) => {
       user: userInfo,
     });
   } catch (error) {
-    console.error("An error occurred while updating user coeffMulti:", error);
+    console.error("An error occurred while updating user coeff_multi:", error);
     res.status(500).json({ error: error.message });
   }
 };
@@ -414,9 +414,9 @@ async function updateUserCoeffMulti(user, transaction) {
 
     const newCoeffMulti = parseFloat((1.0 + achievementCount * 0.1).toFixed(1));
 
-    await user.update({ coeffMulti: newCoeffMulti }, { transaction: transaction });
+    await user.update({ coeff_multi: newCoeffMulti }, { transaction: transaction });
   } catch (err) {
-    console.error("An error occurred while updating user coeffMulti:", err);
+    console.error("An error occurred while updating user coeff_multi:", err);
     throw err;
   }
 }
@@ -465,7 +465,7 @@ async function checkAchievements(user, transaction) {
         where: { id: achievement.id },
         transaction: transaction,
       });
-      if (existingAchievement.length === 0 && user.consecutiveDaysPlayed >= achievement.days) {
+      if (existingAchievement.length === 0 && user.consecutive_days_played >= achievement.days) {
         const newAchievement = await Achievement.findByPk(achievement.id, {
           transaction: transaction,
         });
@@ -633,7 +633,7 @@ const updateUserStats = async (
 
     let coeffTrustIndex = user.trust_index / 80;
     coeffTrustIndex = Math.max(coeffTrustIndex, 0);
-    let additionalPoints = Math.round(pointsToAdd * coeffTrustIndex * user.coeffMulti);
+    let additionalPoints = Math.round(pointsToAdd * coeffTrustIndex * user.coeff_multi);
 
     // On ajoute les points supplémentaires si tous les skins sont débloqués
     const newRewardTier = Math.floor((user.points + additionalPoints) / 100);
@@ -665,19 +665,19 @@ const updateUserStats = async (
 
     // Gestion des jours consécutifs joués
     const today = new Date();
-    const lastPlayedDate = user.lastPlayedDate ? new Date(user.lastPlayedDate) : null;
+    const lastPlayedDate = user.last_played_date ? new Date(user.last_played_date) : null;
     const yesterday = new Date();
     yesterday.setDate(yesterday.getDate() - 1);
 
     const formatDate = (date) => date.toISOString().slice(0, 10);
 
     if (lastPlayedDate && formatDate(lastPlayedDate) === formatDate(yesterday)) {
-      user.consecutiveDaysPlayed = (user.consecutiveDaysPlayed || 0) + 1;
+      user.consecutive_days_played = (user.consecutive_days_played || 0) + 1;
     } else if (!lastPlayedDate || formatDate(lastPlayedDate) !== formatDate(today)) {
-      user.consecutiveDaysPlayed = 1;
+      user.consecutive_days_played = 1;
     }
 
-    user.lastPlayedDate = formatDate(today);
+    user.last_played_date = formatDate(today);
     await user.save({ transaction: transaction });
 
     let showSkinModal = false;
@@ -694,7 +694,7 @@ const updateUserStats = async (
       newPoints: user.points,
       newCatchProbability: Math.round(parseFloat(user.catch_probability)), // Arrondi à l'entier
       newTrustIndex: user.trust_index,
-      newCoeffMulti: user.coeffMulti,
+      newCoeffMulti: user.coeff_multi,
       newAchievements,
       showSkinModal,
       skinData,
@@ -727,7 +727,7 @@ const getCoeffMultiByUserId = async (req, res) => {
 
   try {
     const user = await User.findOne({
-      attributes: ["coeffMulti"],
+      attributes: ["coeff_multi"],
       where: { id: userId },
     });
 
@@ -735,7 +735,7 @@ const getCoeffMultiByUserId = async (req, res) => {
       return res.status(404).json({ error: "User not found" });
     }
 
-    const coeffMulti = parseFloat(user.coeffMulti);
+    const coeffMulti = parseFloat(user.coeff_multi);
     res.status(200).json({ coeffMulti });
   } catch (error) {
     res.status(500).json({ error: error.message });

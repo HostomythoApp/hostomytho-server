@@ -65,17 +65,17 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.INTEGER,
         defaultValue: 0,
       },
-      consecutiveDaysPlayed: {
+      consecutive_days_played: {
         type: DataTypes.INTEGER,
         defaultValue: 0,
       },
-      lastPlayedDate: {
+      last_played_date: {
         type: DataTypes.STRING(45),
       },
       created_at: {
         type: DataTypes.STRING(45),
       },
-      coeffMulti: {
+      coeff_multi: {
         type: DataTypes.DECIMAL(2, 1),
         defaultValue: 1.0,
       },
