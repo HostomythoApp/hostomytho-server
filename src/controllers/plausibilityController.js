@@ -481,16 +481,14 @@ const checkUserSelectionPlausibility = async (
     const isPlausibilityCorrect =
       Math.abs(userRateSelected - textPlausibility) <= plausibilityMargin;
 
-    let isValid = isPlausibilityCorrect;
     let reasonForRate = textDetails.reason_for_rate || "";
 
     const isErrorDetailsCorrect =
-      testPlausibilityError.length > 0
-        ? areUserErrorsCorrect(userErrorDetails, testPlausibilityError, tokenErrorMargin)
-        : true;
+      testPlausibilityError.length === 0 ||
+      areUserErrorsCorrect(userErrorDetails, testPlausibilityError, tokenErrorMargin);
 
     return {
-      isValid: isValid && isErrorDetailsCorrect,
+      isValid: isPlausibilityCorrect && isErrorDetailsCorrect,
       testPlausibilityError: isErrorDetailsCorrect ? [] : testPlausibilityError,
       correctPlausibility: textPlausibility,
       testPlausibilityPassed: isPlausibilityCorrect,
