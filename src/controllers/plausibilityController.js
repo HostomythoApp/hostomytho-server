@@ -353,9 +353,7 @@ const sendResponse = async (req, res) => {
             // Comparer la note utilisateur avec cette moyenne
             success = Math.abs(averagePlausibility - userRateSelected) <= 13;
 
-            pointsToAdd = success
-              ? basePointsEarnedMythoOuPas + userErrorDetails.length
-              : basePointsEarnedMythoOuPas + userErrorDetails.length;
+            pointsToAdd = basePointsEarnedMythoOuPas + userErrorDetails.length;
             trustIndexIncrement = success ? 1 : -1;
             percentageToAdd = success
               ? base_catchability_mythooupas
