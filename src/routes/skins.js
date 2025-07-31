@@ -22,7 +22,7 @@ const organizeSkinsByType = (skins) => {
 };
 
 /* GET skins listing. */
-router.get("/", async function (req, res, next) {
+router.get("/", async function (req, res, _next) {
   try {
     const skins = await Skin.findAll();
     const skinsByType = organizeSkinsByType(skins);
@@ -32,7 +32,7 @@ router.get("/", async function (req, res, next) {
   }
 });
 
-router.get("/byUserId/:userId", async function (req, res, next) {
+router.get("/byUserId/:userId", async function (req, res, _next) {
   try {
     const userId = req.params.userId;
     // Récupération du genre de l'utilisateur
@@ -64,7 +64,7 @@ router.get("/byUserId/:userId", async function (req, res, next) {
   }
 });
 
-router.get("/equipped/:userId", async function (req, res, next) {
+router.get("/equipped/:userId", async function (req, res, _next) {
   try {
     const userId = req.params.userId;
     const userSkins = await UserSkin.findAll({
@@ -84,7 +84,7 @@ router.get("/equipped/:userId", async function (req, res, next) {
   }
 });
 
-router.put("/equip/:skinId", userAuthMiddleware, async function (req, res, next) {
+router.put("/equip/:skinId", userAuthMiddleware, async function (req, res, _next) {
   try {
     const userId = req.user.id;
     const skinId = req.params.skinId;
@@ -125,7 +125,7 @@ router.put("/equip/:skinId", userAuthMiddleware, async function (req, res, next)
   }
 });
 
-router.put("/unequip/:skinId", userAuthMiddleware, async function (req, res, next) {
+router.put("/unequip/:skinId", userAuthMiddleware, async function (req, res, _next) {
   try {
     const userId = req.user.id;
     const skinId = req.params.skinId;
@@ -149,7 +149,7 @@ router.put("/unequip/:skinId", userAuthMiddleware, async function (req, res, nex
   }
 });
 
-router.get("/getImageCharacterByUserId/:userId", async function (req, res, next) {
+router.get("/getImageCharacterByUserId/:userId", async function (req, res, _next) {
   try {
     const user = await User.findByPk(req.params.id, {
       attributes: { exclude: ["password"] },

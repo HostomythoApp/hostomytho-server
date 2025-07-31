@@ -7,7 +7,7 @@ const { userAuthMiddleware } = require("../middleware/authMiddleware");
 const { Op } = require("sequelize");
 const { getVariableFromCache } = require("../service/cache");
 
-router.get("/getTextMythoTypo", async function (req, res, next) {
+router.get("/getTextMythoTypo", async function (req, res, _next) {
   try {
     const percentage_test_mythotypo = getVariableFromCache("percentage_test_mythotypo") || 30;
     const randomNumber = Math.floor(Math.random() * 100);
@@ -232,7 +232,7 @@ const getCorrectionMessage = (errorTypeId) => {
   }
 };
 
-router.get("/getTypesError", async function (req, res, next) {
+router.get("/getTypesError", async function (req, res, _next) {
   try {
     const errorType = await ErrorType.findAll();
     res.status(200).json(errorType);

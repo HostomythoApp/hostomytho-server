@@ -1,7 +1,6 @@
-const jwt = require("jsonwebtoken");
 var express = require("express");
 var router = express.Router();
-const { MessageMenu, User, PasswordResetToken, Text } = require("../models");
+const { MessageMenu, User, PasswordResetToken } = require("../models");
 const Mailjet = require("node-mailjet");
 const crypto = require("crypto");
 const bcrypt = require("bcryptjs");

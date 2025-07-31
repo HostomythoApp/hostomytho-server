@@ -1,4 +1,3 @@
-const jwt = require("jsonwebtoken");
 var express = require("express");
 var router = express.Router();
 const textController = require("../controllers/textController");
@@ -7,7 +6,6 @@ const plausibilityController = require("../controllers/plausibilityController");
 const multer = require("multer");
 const upload = multer({ dest: "../uploads/" }); // Stockage temporaire des fichiers
 const fs = require("fs");
-const path = require("path");
 
 const { adminAuthMiddleware } = require("../middleware/authMiddleware");
 
@@ -36,10 +34,7 @@ router.get("/", adminAuthMiddleware, textController.getAllTexts);
 router.get("/getTextTestPlausibility", plausibilityController.getTextTestPlausibility);
 
 router.get("/getTextWithTokensById/:textId", textController.getTextWithTokensById);
-// router.get(
-//   "/getTextWithErrorValidatedNotPlayed/:userId",
-//   errorController.getTextWithErrorValidatedNotPlayed
-// );
+
 router.get("/getTextWithErrorValidated", errorController.getTextWithErrorValidated);
 router.get(
   "/getTextWithErrorValidatedByErrorId/:errorId",

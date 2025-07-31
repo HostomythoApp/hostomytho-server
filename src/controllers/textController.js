@@ -93,11 +93,6 @@ const getSmallTextWithTokens = async (req, res) => {
         return res.status(404).json({ error: "Cannot find a suitable start position" });
       }
 
-      // Le maxStartIndex est maintenant l'index du dernier élément qui peut servir de point de départ valide
-      let maxStartIndex =
-        validStartIndexes < sentences.length ? validStartIndexes : sentences.length - 1;
-
-      let startIndex = Math.floor(Math.random() * (maxStartIndex + 1));
       let startFromEnd = Math.random() < 0.5; // 50% chance de commencer par la fin
 
       if (startFromEnd) {
@@ -300,7 +295,7 @@ const createText = async (req, res) => {
 
     exec(
       `../hostomythoenv/bin/python ${scriptToRun} "${content}"`,
-      async (error, stdout, stderr) => {
+      async (error, stdout, _stderr) => {
         if (error) {
           console.error(`exec error: ${error}`);
           return res.status(500).json({ error: error.message });

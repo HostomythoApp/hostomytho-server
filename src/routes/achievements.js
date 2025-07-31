@@ -22,7 +22,7 @@ const getAchievementsByUserId = async (req, res) => {
 };
 
 /************* ROUTES *************/
-router.get("/", async function (req, res, next) {
+router.get("/", async function (req, res, _next) {
   try {
     const achievements = await Achievement.findAll();
     res.status(200).json(achievements);

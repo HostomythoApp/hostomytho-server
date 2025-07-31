@@ -40,7 +40,7 @@ const getRandomSkin = async (userId, transaction) => {
     const selectedSkin = skinPool[randomIndex];
 
     // Créer une nouvelle entrée pour indiquer que l'utilisateur possède maintenant ce skin
-    const newSkin = await UserSkin.create(
+    await UserSkin.create(
       {
         user_id: userId,
         skin_id: selectedSkin.id,

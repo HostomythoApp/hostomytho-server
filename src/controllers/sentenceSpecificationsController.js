@@ -84,9 +84,6 @@ const sendResponse = async (req, res) => {
         const correctSpecification = checkResult.testSpecifications
           .map((spec) => `• ${spec.content}`)
           .join("\n");
-        const allPositions = checkResult.testSpecifications.flatMap((spec) =>
-          spec.word_positions.split(",").map((pos) => parseInt(pos))
-        );
 
         message =
           checkResult.testSpecifications.length > 0

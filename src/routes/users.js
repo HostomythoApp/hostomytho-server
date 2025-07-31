@@ -56,7 +56,7 @@ router.put(
 
 router.put("/:id/resetCatchProbability", userAuthMiddleware, userController.resetCatchProbability);
 
-router.get("/:id", adminOrUserMiddleware, async function (req, res, next) {
+router.get("/:id", adminOrUserMiddleware, async function (req, res, _next) {
   try {
     const user = await User.findByPk(req.params.id, {
       attributes: { exclude: ["password", "notifications_enabled"] },

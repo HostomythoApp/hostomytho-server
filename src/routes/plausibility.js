@@ -1,6 +1,5 @@
 var express = require("express");
 var router = express.Router();
-const { userAuthMiddleware } = require("../middleware/authMiddleware");
 
 const plausibilityController = require("../controllers/plausibilityController");
 

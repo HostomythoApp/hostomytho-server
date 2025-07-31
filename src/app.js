@@ -59,7 +59,7 @@ app.use(
   })
 );
 
-app.use((err, req, res, next) => {
+app.use((err, req, res, _next) => {
   // format error
   res.status(err.status || 500).json({
     message: err.message,

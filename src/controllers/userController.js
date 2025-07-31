@@ -809,7 +809,7 @@ const getUserDetailsById = async (req, res) => {
     const userColorSkin = user.color_skin;
 
     // Date de création
-    createdAt = moment(user.created_at).locale("fr").format("DD MMMM YYYY");
+    const createdAt = moment(user.created_at).locale("fr").format("DD MMMM YYYY");
 
     // Récupérer le nombre de hauts faits accomplis par l'utilisateur
     const userAchievements = await user.getAchievements();

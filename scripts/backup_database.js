@@ -32,7 +32,7 @@ const performBackup = () => {
 
   const backupCommand = `mysqldump -h ${process.env.DB_HOST} -u ${process.env.DB_USER} --password=${process.env.DB_PASSWORD} ${process.env.DB_NAME} > ${backupFile}`;
 
-  exec(backupCommand, (error, stdout, stderr) => {
+  exec(backupCommand, (error, _stdout, _stderr) => {
     if (error) {
       logToFile(`Erreur lors du backup de la base de données: ${error}`);
       return;
@@ -56,7 +56,7 @@ const cleanOldBackups = (callback) => {
       return callback();
     }
     const cleanupActions = files.map((file) => {
-      return new Promise((resolve, reject) => {
+      return new Promise((resolve, _reject) => {
         const filePath = path.join(backupDir, file);
         fs.stat(filePath, (err, stats) => {
           if (err) {

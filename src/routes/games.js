@@ -3,7 +3,7 @@ var router = express.Router();
 const { Game, UserTutorial } = require("../models");
 const { userAuthMiddleware } = require("../middleware/authMiddleware");
 
-router.get("/tutorialsCompleted/:userId", async function (req, res, next) {
+router.get("/tutorialsCompleted/:userId", async function (req, res, _next) {
   try {
     const userId = req.params.userId;
     const tutorialsCompleted = await UserTutorial.findAll({
@@ -25,7 +25,7 @@ router.get("/tutorialsCompleted/:userId", async function (req, res, next) {
   }
 });
 
-router.get("/tutorialCompleted/:userId/:gameId", async function (req, res, next) {
+router.get("/tutorialCompleted/:userId/:gameId", async function (req, res, _next) {
   try {
     const { userId, gameId } = req.params;
     const tutorialCompleted = await UserTutorial.findOne({
@@ -45,7 +45,7 @@ router.get("/tutorialCompleted/:userId/:gameId", async function (req, res, next)
   }
 });
 
-router.post("/completeTutorial", userAuthMiddleware, async (req, res, next) => {
+router.post("/completeTutorial", userAuthMiddleware, async (req, res, _next) => {
   try {
     const { gameId } = req.body;
     const userId = req.user.id;
