@@ -10,11 +10,11 @@ module.exports = (sequelize, DataTypes) => {
         primaryKey: true,
       },
       num: {
-        type: DataTypes.STRING(45),
+        type: DataTypes.STRING(255),
         allowNull: false,
       },
       content: {
-        type: DataTypes.TEXT,
+        type: DataTypes.TEXT("long"),
         allowNull: false,
       },
       origin: {
@@ -31,7 +31,7 @@ module.exports = (sequelize, DataTypes) => {
         defaultValue: null,
       },
       reason_for_rate: {
-        type: DataTypes.TEXT,
+        type: DataTypes.TEXT("long"),
         defaultValue: null,
       },
       is_hypothesis_specification_test: {

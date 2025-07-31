@@ -39,7 +39,7 @@ module.exports = (sequelize, DataTypes) => {
         defaultValue: 0,
       },
       trust_index: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.TINYINT(1),
         defaultValue: 50,
       },
       notifications_enabled: {
@@ -80,11 +80,11 @@ module.exports = (sequelize, DataTypes) => {
         defaultValue: 1.0,
       },
       nb_first_monthly: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.TINYINT(4),
         defaultValue: 0,
       },
       tutorial_progress: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.TINYINT(4),
         defaultValue: 0,
       },
       message_read: {

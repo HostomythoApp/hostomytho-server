@@ -27,7 +27,7 @@ module.exports = {
           type: Sequelize.DataTypes.INTEGER,
         },
         is_punctuation: {
-          type: Sequelize.DataTypes.BOOLEAN,
+          type: Sequelize.DataTypes.TINYINT(4),
           defaultValue: false,
         },
         sentence_id: {

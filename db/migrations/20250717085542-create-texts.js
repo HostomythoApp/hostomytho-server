@@ -12,11 +12,11 @@ module.exports = {
           primaryKey: true,
         },
         num: {
-          type: Sequelize.DataTypes.STRING(45),
+          type: Sequelize.DataTypes.STRING(255),
           allowNull: false,
         },
         content: {
-          type: Sequelize.DataTypes.TEXT,
+          type: Sequelize.DataTypes.TEXT("long"),
           allowNull: false,
           defaultValue: "",
         },
@@ -26,7 +26,7 @@ module.exports = {
           allowNull: false,
         },
         is_plausibility_test: {
-          type: Sequelize.DataTypes.BOOLEAN,
+          type: Sequelize.DataTypes.TINYINT(4),
           defaultValue: false,
         },
         test_plausibility: {
@@ -34,19 +34,19 @@ module.exports = {
           defaultValue: null,
         },
         reason_for_rate: {
-          type: Sequelize.DataTypes.TEXT,
+          type: Sequelize.DataTypes.TEXT("long"),
           defaultValue: null,
         },
         is_hypothesis_specification_test: {
-          type: Sequelize.DataTypes.BOOLEAN,
+          type: Sequelize.DataTypes.TINYINT(4),
           defaultValue: false,
         },
         is_condition_specification_test: {
-          type: Sequelize.DataTypes.BOOLEAN,
+          type: Sequelize.DataTypes.TINYINT(4),
           defaultValue: false,
         },
         is_negation_specification_test: {
-          type: Sequelize.DataTypes.BOOLEAN,
+          type: Sequelize.DataTypes.TINYINT(4),
           defaultValue: false,
         },
         nb_of_treatments: {
@@ -54,7 +54,7 @@ module.exports = {
           defaultValue: 0,
         },
         is_active: {
-          type: Sequelize.DataTypes.BOOLEAN,
+          type: Sequelize.DataTypes.TINYINT(4),
           defaultValue: true,
         },
         length: {

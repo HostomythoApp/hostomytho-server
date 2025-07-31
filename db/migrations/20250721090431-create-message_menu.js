@@ -18,7 +18,7 @@ module.exports = {
           type: Sequelize.DataTypes.TEXT("long"),
         },
         active: {
-          type: Sequelize.DataTypes.BOOLEAN,
+          type: Sequelize.DataTypes.TINYINT(4),
           defaultValue: false,
         },
         message_type: {

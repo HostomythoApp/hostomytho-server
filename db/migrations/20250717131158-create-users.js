@@ -39,7 +39,7 @@ module.exports = {
           defaultValue: 0,
         },
         trust_index: {
-          type: Sequelize.DataTypes.INTEGER,
+          type: Sequelize.DataTypes.TINYINT(1),
           defaultValue: 50,
         },
         notifications_enabled: {
@@ -56,7 +56,7 @@ module.exports = {
           allowNull: false,
         },
         moderator: {
-          type: Sequelize.DataTypes.BOOLEAN,
+          type: Sequelize.DataTypes.TINYINT(4),
           defaultValue: false,
         },
         catch_probability: {
@@ -78,15 +78,15 @@ module.exports = {
           defaultValue: 1.0,
         },
         nb_first_monthly: {
-          type: Sequelize.DataTypes.INTEGER,
+          type: Sequelize.DataTypes.TINYINT(4),
           defaultValue: 0,
         },
         tutorial_progress: {
-          type: Sequelize.DataTypes.INTEGER,
+          type: Sequelize.DataTypes.TINYINT(4),
           defaultValue: 0,
         },
         message_read: {
-          type: Sequelize.DataTypes.BOOLEAN,
+          type: Sequelize.DataTypes.TINYINT(4),
           defaultValue: true,
         },
       },

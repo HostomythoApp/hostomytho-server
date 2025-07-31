@@ -27,7 +27,7 @@ module.exports = {
           onUpdate: "CASCADE",
         },
         equipped: {
-          type: Sequelize.DataTypes.BOOLEAN,
+          type: Sequelize.DataTypes.TINYINT(4),
           defaultValue: false,
         },
       },
